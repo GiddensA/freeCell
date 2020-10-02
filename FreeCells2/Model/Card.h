@@ -24,8 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *) toString;
 
-- (NSString *) getCardImageString:(BOOL) isHighlighted;
+- (NSString *) getCardImageString;
 
+- (void) select;
+
+- (BOOL) isSelected;
 @end
 
 NS_ASSUME_NONNULL_END

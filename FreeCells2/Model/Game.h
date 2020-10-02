@@ -19,6 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray *) getGameBoard;
 
 - (NSString *) gameBoardToString;
+
+- (BOOL) checkSelectionAtRow:(int) row column:(int) column;
+
+- (NSArray *) selectCardAtRow:(int) row column:(int) column;
 @end
 
 NS_ASSUME_NONNULL_END

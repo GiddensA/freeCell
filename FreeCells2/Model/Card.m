@@ -14,6 +14,7 @@
     enum card_suit suit;
     enum card_color color;
     int value;
+    BOOL isSelected;
 
 }
 @end
@@ -27,6 +28,7 @@
     {
         self->suit = suit;
         self->value = value;
+        self->isSelected = NO;
         
         self->color = [utils GetCardColor:self->suit];
         
@@ -97,11 +99,18 @@
     }
 }
 
-- (NSString *)getCardImageString:(BOOL) isHighlighted
+- (NSString *)getCardImageString
 {
-    return !isHighlighted ? [NSString stringWithFormat:@"card_%d_%d", self->value, self->suit] : [NSString stringWithFormat:@"card_%d_%d_highlight", self->value, self->suit];
+    return !self->isSelected ? [NSString stringWithFormat:@"card_%d_%d", self->value, self->suit] : [NSString stringWithFormat:@"card_%d_%d_highlight", self->value, self->suit];
 }
 
+- (void) select {
+    self->isSelected = !self->isSelected;
+}
 
+- (BOOL)isSelected
+{
+    return self->isSelected;
+}
 
 @end

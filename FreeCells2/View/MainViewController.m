@@ -32,7 +32,7 @@
     NSTrackingArea *mTrackingArea;
     
     Game *mGame;
-    NSArray<NSArray <Card *> *> *mBoard;
+    NSMutableArray<NSArray <Card *> *> *mBoard;
     NSMutableArray<NSMutableArray<CardImageView *> *> *mCardViewArr;
     
     CGFloat gap_between_cards;
@@ -52,7 +52,7 @@
                                                     userInfo:nil];
         
         mGame = [[Game alloc] init];
-        mBoard = [mGame getGameBoard];
+        mBoard = [NSMutableArray arrayWithArray:[mGame getGameBoard]];
         
         mCardViewArr = [NSMutableArray array];
         
@@ -115,7 +115,7 @@
         int row = 0;
         for (Card *card in column)
         {
-            CardImageView *viewCard = [CardImageView imageViewWithImage:[NSImage imageNamed:[card getCardImageString:NO]]];
+            CardImageView *viewCard = [CardImageView imageViewWithImage:[NSImage imageNamed:[card getCardImageString]]];
             [viewCard setFrame:CGRectMake(start_x,
                                           start_y - card_vertical_overlap_gap * row,
                                           card_width,
@@ -137,7 +137,7 @@
 
 - (IBAction)onIndicatorClicked:(NSButton *)sender {
     [mGame resetGame];
-    mBoard = [mGame getGameBoard];
+    mBoard = [NSMutableArray arrayWithArray:[mGame getGameBoard]];
     mCardViewArr = [NSMutableArray array];
     [self layoutCards];
     
@@ -170,6 +170,21 @@
     int row = (int)card.row;
     int column = (int)card.column;
     LOG_UI(TAG, @"clicked on card %d %d", row, column);
+    
+    if (![mGame checkSelectionAtRow:row column:column])
+    {
+        // move card
+        return;
+    } else {
+        // select card(s)
+        mBoard[column] = [mGame selectCardAtRow:row column:column];
+        for (int i = row; i < mBoard[column].count; i++)
+        {
+            [mCardViewArr[column][i] setImage:[NSImage imageNamed:[mBoard[column][i] getCardImageString]]];
+        }
+    }
+    
+   
 }
 
 - (void) onCardRightClickedDown:(CardImageView *) card

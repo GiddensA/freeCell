@@ -19,6 +19,8 @@
     NSMutableArray<Card *> *freeCells;
     NSMutableArray<Card *> *orderedDeck;
     NSMutableArray<Card *> *lastRow;
+    
+    NSPoint selectedPos;
 }
 @end
 
@@ -29,6 +31,7 @@
     self = [super init];
     if (self)
     {
+        selectedPos = NSMakePoint(-1, -1);
         mDeck = [[Deck alloc] init];
         [mDeck shuffle];
         
@@ -44,6 +47,7 @@
 
 - (void) resetGame
 {
+    selectedPos = NSMakePoint(-1, -1);
     [mDeck resetDeck];
     [mDeck shuffle];
     
@@ -135,5 +139,20 @@
     }
 }
 
+- (BOOL) checkSelectionAtRow:(int)row column:(int)column
+{
+    return (selectedPos.x == -1 && selectedPos.y == -1) || (selectedPos.x == row && selectedPos.y == column);
+}
 
+- (NSArray *) selectCardAtRow:(int)row column:(int)column
+{
+    
+    for (int i = row; i < mGameBoard[column].count; i++)
+    {
+        [(Card *)(mGameBoard[column][i]) select];
+        LOG_MODOLE(TAG, @"select card %@ at %d,%d isSelected = %d", [(Card *)(mGameBoard[column][i]) toString], row, column, [(Card *)(mGameBoard[column][i]) isSelected])
+    }
+    selectedPos = [(Card *)(mGameBoard[column][row]) isSelected] ? NSMakePoint(row, column) : NSMakePoint(-1, -1);
+    return mGameBoard[column];
+}
 @end
