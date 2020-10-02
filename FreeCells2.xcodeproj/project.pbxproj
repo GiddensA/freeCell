@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E768065825273E740098BC94 /* CardImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E768065725273E740098BC94 /* CardImageView.m */; };
 		E77E0AED252622BE0029010A /* Deck.m in Sources */ = {isa = PBXBuildFile; fileRef = E77E0AEC252622BE0029010A /* Deck.m */; };
 		E77E0AF025262DF80029010A /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = E77E0AEF25262DF80029010A /* Game.m */; };
 		E7BD072025260A9D00D0528E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E7BD071F25260A9D00D0528E /* AppDelegate.m */; };
@@ -19,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E768065625273E740098BC94 /* CardImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CardImageView.h; sourceTree = "<group>"; };
+		E768065725273E740098BC94 /* CardImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardImageView.m; sourceTree = "<group>"; };
 		E77E0AEA252610800029010A /* LOG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LOG.h; sourceTree = "<group>"; };
 		E77E0AEB252622BE0029010A /* Deck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Deck.h; sourceTree = "<group>"; };
 		E77E0AEC252622BE0029010A /* Deck.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Deck.m; sourceTree = "<group>"; };
@@ -55,6 +58,8 @@
 		E7680655252726210098BC94 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E768065625273E740098BC94 /* CardImageView.h */,
+				E768065725273E740098BC94 /* CardImageView.m */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -205,6 +210,7 @@
 			files = (
 				E7BD073C25260B2200D0528E /* Card.m in Sources */,
 				E7BD072325260A9D00D0528E /* MainViewController.m in Sources */,
+				E768065825273E740098BC94 /* CardImageView.m in Sources */,
 				E7BD072B25260A9F00D0528E /* main.m in Sources */,
 				E7BD072025260A9D00D0528E /* AppDelegate.m in Sources */,
 				E77E0AED252622BE0029010A /* Deck.m in Sources */,
