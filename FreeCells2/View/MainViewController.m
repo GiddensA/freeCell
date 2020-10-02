@@ -6,14 +6,16 @@
 //  Copyright © 2020 Alan L  Hamilton. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "MainViewController.h"
+#import "Game.h"
 
-@implementation ViewController
+@implementation MainViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
+    Game *g = [[Game alloc] init];
 }
 
 

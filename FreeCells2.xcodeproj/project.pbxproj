@@ -7,24 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E77E0AED252622BE0029010A /* Deck.m in Sources */ = {isa = PBXBuildFile; fileRef = E77E0AEC252622BE0029010A /* Deck.m */; };
+		E77E0AF025262DF80029010A /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = E77E0AEF25262DF80029010A /* Game.m */; };
 		E7BD072025260A9D00D0528E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E7BD071F25260A9D00D0528E /* AppDelegate.m */; };
-		E7BD072325260A9D00D0528E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7BD072225260A9D00D0528E /* ViewController.m */; };
+		E7BD072325260A9D00D0528E /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7BD072225260A9D00D0528E /* MainViewController.m */; };
 		E7BD072525260A9F00D0528E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7BD072425260A9F00D0528E /* Assets.xcassets */; };
 		E7BD072825260A9F00D0528E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7BD072625260A9F00D0528E /* Main.storyboard */; };
 		E7BD072B25260A9F00D0528E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E7BD072A25260A9F00D0528E /* main.m */; };
+		E7BD073925260B1900D0528E /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = E7BD073725260B1900D0528E /* utils.m */; };
+		E7BD073C25260B2200D0528E /* Card.m in Sources */ = {isa = PBXBuildFile; fileRef = E7BD073A25260B2200D0528E /* Card.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E77E0AEA252610800029010A /* LOG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LOG.h; sourceTree = "<group>"; };
+		E77E0AEB252622BE0029010A /* Deck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Deck.h; sourceTree = "<group>"; };
+		E77E0AEC252622BE0029010A /* Deck.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Deck.m; sourceTree = "<group>"; };
+		E77E0AEE25262DF80029010A /* Game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
+		E77E0AEF25262DF80029010A /* Game.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Game.m; sourceTree = "<group>"; };
 		E7BD071B25260A9D00D0528E /* FreeCells2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeCells2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7BD071E25260A9D00D0528E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E7BD071F25260A9D00D0528E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		E7BD072125260A9D00D0528E /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		E7BD072225260A9D00D0528E /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		E7BD072125260A9D00D0528E /* MainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		E7BD072225260A9D00D0528E /* MainViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		E7BD072425260A9F00D0528E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E7BD072725260A9F00D0528E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E7BD072925260A9F00D0528E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E7BD072A25260A9F00D0528E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		E7BD072C25260A9F00D0528E /* FreeCells2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FreeCells2.entitlements; sourceTree = "<group>"; };
+		E7BD073625260B1900D0528E /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		E7BD073725260B1900D0528E /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
+		E7BD073825260B1900D0528E /* constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constants.h; sourceTree = "<group>"; };
+		E7BD073A25260B2200D0528E /* Card.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Card.m; sourceTree = "<group>"; };
+		E7BD073B25260B2200D0528E /* Card.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Card.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +52,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E7680655252726210098BC94 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		E7BD071225260A9D00D0528E = {
 			isa = PBXGroup;
 			children = (
@@ -57,10 +78,10 @@
 		E7BD071D25260A9D00D0528E /* FreeCells2 */ = {
 			isa = PBXGroup;
 			children = (
-				E7BD071E25260A9D00D0528E /* AppDelegate.h */,
-				E7BD071F25260A9D00D0528E /* AppDelegate.m */,
-				E7BD072125260A9D00D0528E /* ViewController.h */,
-				E7BD072225260A9D00D0528E /* ViewController.m */,
+				E7BD073525260ACD00D0528E /* Util */,
+				E7BD073425260AC000D0528E /* Delegate */,
+				E7BD073325260AB900D0528E /* Model */,
+				E7BD073225260AB300D0528E /* View */,
 				E7BD072425260A9F00D0528E /* Assets.xcassets */,
 				E7BD072625260A9F00D0528E /* Main.storyboard */,
 				E7BD072925260A9F00D0528E /* Info.plist */,
@@ -68,6 +89,49 @@
 				E7BD072C25260A9F00D0528E /* FreeCells2.entitlements */,
 			);
 			path = FreeCells2;
+			sourceTree = "<group>";
+		};
+		E7BD073225260AB300D0528E /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E7680655252726210098BC94 /* Components */,
+				E7BD072125260A9D00D0528E /* MainViewController.h */,
+				E7BD072225260A9D00D0528E /* MainViewController.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		E7BD073325260AB900D0528E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E7BD073B25260B2200D0528E /* Card.h */,
+				E7BD073A25260B2200D0528E /* Card.m */,
+				E77E0AEB252622BE0029010A /* Deck.h */,
+				E77E0AEC252622BE0029010A /* Deck.m */,
+				E77E0AEE25262DF80029010A /* Game.h */,
+				E77E0AEF25262DF80029010A /* Game.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		E7BD073425260AC000D0528E /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				E7BD071E25260A9D00D0528E /* AppDelegate.h */,
+				E7BD071F25260A9D00D0528E /* AppDelegate.m */,
+			);
+			path = Delegate;
+			sourceTree = "<group>";
+		};
+		E7BD073525260ACD00D0528E /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				E7BD073825260B1900D0528E /* constants.h */,
+				E7BD073625260B1900D0528E /* utils.h */,
+				E7BD073725260B1900D0528E /* utils.m */,
+				E77E0AEA252610800029010A /* LOG.h */,
+			);
+			path = Util;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,9 +203,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E7BD072325260A9D00D0528E /* ViewController.m in Sources */,
+				E7BD073C25260B2200D0528E /* Card.m in Sources */,
+				E7BD072325260A9D00D0528E /* MainViewController.m in Sources */,
 				E7BD072B25260A9F00D0528E /* main.m in Sources */,
 				E7BD072025260A9D00D0528E /* AppDelegate.m in Sources */,
+				E77E0AED252622BE0029010A /* Deck.m in Sources */,
+				E77E0AF025262DF80029010A /* Game.m in Sources */,
+				E7BD073925260B1900D0528E /* utils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
