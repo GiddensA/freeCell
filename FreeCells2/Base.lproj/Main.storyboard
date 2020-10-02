@@ -732,6 +732,7 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="index">
                                         <integer key="value" value="0"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="canRightClick" value="NO"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="onFreeCellClicked:" target="XfG-lQ-9wD" id="Wh6-W9-9RE"/>
@@ -745,6 +746,7 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="index">
                                         <integer key="value" value="1"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="canRightClick" value="NO"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="onFreeCellClicked:" target="XfG-lQ-9wD" id="gE9-kQ-weH"/>
@@ -758,6 +760,7 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="index">
                                         <integer key="value" value="2"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="canRightClick" value="NO"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="onFreeCellClicked:" target="XfG-lQ-9wD" id="BYK-wI-vrg"/>
@@ -771,6 +774,7 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="index">
                                         <integer key="value" value="3"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="canRightClick" value="NO"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="onFreeCellClicked:" target="XfG-lQ-9wD" id="YFZ-Jw-QDe"/>
@@ -784,6 +788,7 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="index">
                                         <integer key="value" value="0"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="canRightClick" value="NO"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="onOrderedDeckClicked:" target="XfG-lQ-9wD" id="cdQ-tu-9j4"/>
@@ -797,6 +802,7 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="index">
                                         <integer key="value" value="1"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="canRightClick" value="NO"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="onOrderedDeckClicked:" target="XfG-lQ-9wD" id="d4M-zg-1ob"/>
@@ -810,6 +816,7 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="index">
                                         <integer key="value" value="2"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="canRightClick" value="NO"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="onOrderedDeckClicked:" target="XfG-lQ-9wD" id="IMD-Gp-hJm"/>
@@ -823,6 +830,7 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="index">
                                         <integer key="value" value="3"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="canRightClick" value="NO"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="onOrderedDeckClicked:" target="XfG-lQ-9wD" id="hIy-R9-AtP"/>

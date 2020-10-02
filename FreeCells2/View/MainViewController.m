@@ -11,6 +11,9 @@
 #import "LOG.h"
 #import "CardImageView.h"
 
+#import "Game.h"
+#import "Card.h"
+
 #define TAG "MainVC"
 
 @interface MainViewController()
@@ -28,6 +31,12 @@
     
     NSTrackingArea *mTrackingArea;
     
+    Game *mGame;
+    NSArray<NSArray <Card *> *> *mBoard;
+    NSMutableArray<NSMutableArray<CardImageView *> *> *mCardViewArr;
+    
+    CGFloat gap_between_cards;
+    
 }
 @end
 @implementation MainViewController
@@ -41,6 +50,13 @@
                                                      options:(NSTrackingMouseMoved|NSTrackingActiveInKeyWindow)
                                                        owner:self
                                                     userInfo:nil];
+        
+        mGame = [[Game alloc] init];
+        mBoard = [mGame getGameBoard];
+        
+        mCardViewArr = [NSMutableArray array];
+        
+        gap_between_cards = (game_board_width - (card_width * num_of_game_board_columns)) * 1.0f / ((num_of_game_board_columns - 1) * 1.0f);
     }
     return self;
 }
@@ -68,13 +84,12 @@
 - (void) setupBoard
 {
     // setup empty card first
-    CGFloat gap_between_cards = (game_board_width - (card_width * num_of_game_board_columns)) * 1.0f / ((num_of_game_board_columns - 1) * 1.0f);
     LOG_UI(TAG, @"gap between cards = %f", gap_between_cards);
     
     for (int i = 0; i < num_of_game_board_columns; i ++)
     {
         CardImageView *emptyCardView = [CardImageView imageViewWithImage:[NSImage imageNamed:@"cardCell"]];
-        [emptyCardView setFrame:CGRectMake(0 + i * (card_width + gap_between_cards),
+        [emptyCardView setFrame:CGRectMake(i * (card_width + gap_between_cards),
                                            game_board_height - card_height,
                                            card_width,
                                            card_height)];
@@ -84,9 +99,57 @@
         
         [mGameBoardView addSubview:emptyCardView];
     }
+    [self layoutCards];
+}
+
+- (void) layoutCards
+{
+    for(int i = 0; i < num_of_game_board_columns; i ++)
+    {
+        NSArray <Card *> *column = mBoard[i];
+        NSMutableArray<CardImageView *> *cardViewColumn = [NSMutableArray array];
+        
+        CGFloat start_x = i * (card_width + gap_between_cards);
+        CGFloat start_y = game_board_height - card_height;
+        
+        int row = 0;
+        for (Card *card in column)
+        {
+            CardImageView *viewCard = [CardImageView imageViewWithImage:[NSImage imageNamed:[card getCardImageString:NO]]];
+            [viewCard setFrame:CGRectMake(start_x,
+                                          start_y - card_vertical_overlap_gap * row,
+                                          card_width,
+                                          card_height)];
+            viewCard.row = row;
+            viewCard.column = i;
+            viewCard.canRightClick = YES;
+            viewCard.target = self;
+            viewCard.action = @selector(onCardClicked:);
+            viewCard.rightMouseDownAction = @selector(onCardRightClickedDown:);
+            viewCard.rightMouseUpAction = @selector(onCardRightClickedUp:);
+            [mGameBoardView addSubview:viewCard];
+            [cardViewColumn addObject:viewCard];
+            row ++;
+        }
+        [mCardViewArr addObject:cardViewColumn];
+    }
 }
 
 - (IBAction)onIndicatorClicked:(NSButton *)sender {
+    [mGame resetGame];
+    mBoard = [mGame getGameBoard];
+    mCardViewArr = [NSMutableArray array];
+    [self layoutCards];
+    
+    [mFreeCell0 setImage:[NSImage imageNamed:@"cardCell"]];
+    [mFreeCell1 setImage:[NSImage imageNamed:@"cardCell"]];
+    [mFreeCell2 setImage:[NSImage imageNamed:@"cardCell"]];
+    [mFreeCell3 setImage:[NSImage imageNamed:@"cardCell"]];
+    
+    [mOrderedDeck0 setImage:[NSImage imageNamed:@"cardCell"]];
+    [mOrderedDeck1 setImage:[NSImage imageNamed:@"cardCell"]];
+    [mOrderedDeck2 setImage:[NSImage imageNamed:@"cardCell"]];
+    [mOrderedDeck3 setImage:[NSImage imageNamed:@"cardCell"]];
 }
 
 - (IBAction)onFreeCellClicked:(CardImageView *)sender {
@@ -102,4 +165,37 @@
     LOG_UI(TAG, @"clicked on empty card %d", index);
 }
 
+- (void) onCardClicked:(CardImageView *) card
+{
+    int row = (int)card.row;
+    int column = (int)card.column;
+    LOG_UI(TAG, @"clicked on card %d %d", row, column);
+}
+
+- (void) onCardRightClickedDown:(CardImageView *) card
+{
+    int row = (int)card.row;
+    int column = (int)card.column;
+    LOG_UI(TAG, @"right clicked down on card %d %d", row, column);
+    
+    if (row < mCardViewArr[column].count - 1) {
+        CardImageView *view = mCardViewArr[column][row];
+        [mGameBoardView addSubview:view];
+        [view becomeFirstResponder];
+    }
+}
+
+- (void) onCardRightClickedUp:(CardImageView *) card
+{
+    int row = (int)card.row;
+    int column = (int)card.column;
+    LOG_UI(TAG, @"right clicked up on card %d %d", row, column);
+    
+    if (row < mCardViewArr[column].count - 1) {
+        CardImageView *view = mCardViewArr[column][row];
+        [view removeFromSuperview];
+        [mGameBoardView addSubview:view positioned:NSWindowBelow relativeTo:mCardViewArr[column][row + 1]];
+        
+    }
+}
 @end

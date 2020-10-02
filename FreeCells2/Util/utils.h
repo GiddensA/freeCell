@@ -19,7 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (int) GetRandomIntFrom:(int) from to:(int) to;
 
 + (NSString *) GetSpaces:(NSString *) str;
-
 @end
 
 NS_ASSUME_NONNULL_END

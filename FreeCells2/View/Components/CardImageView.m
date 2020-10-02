@@ -22,4 +22,14 @@
     [NSApp sendAction:[self action] to:[self target] from:self];
 }
 
+- (void) rightMouseUp:(NSEvent *)event
+{
+    [NSApp sendAction:[self rightMouseUpAction] to:[self target] from:self];
+}
+
+- (void)rightMouseDown:(NSEvent *)event
+{
+    [NSApp sendAction:[self rightMouseDownAction] to:[self target] from:self];
+}
+
 @end

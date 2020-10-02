@@ -14,6 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) IBInspectable NSInteger index;
 @property (nonatomic) IBInspectable NSInteger row;
 @property (nonatomic) IBInspectable NSInteger column;
+@property (nonatomic) IBInspectable BOOL canRightClick;
+@property (nullable) SEL rightMouseDownAction;
+@property (nullable) SEL rightMouseUpAction;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -97,6 +97,11 @@
     }
 }
 
+- (NSString *)getCardImageString:(BOOL) isHighlighted
+{
+    return !isHighlighted ? [NSString stringWithFormat:@"card_%d_%d", self->value, self->suit] : [NSString stringWithFormat:@"card_%d_%d_highlight", self->value, self->suit];
+}
+
 
 
 @end

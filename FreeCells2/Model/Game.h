@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) resetGame;
 
+- (NSArray *) getGameBoard;
+
 - (NSString *) gameBoardToString;
 @end
 

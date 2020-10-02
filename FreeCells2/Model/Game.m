@@ -54,6 +54,11 @@
     lastRow = [NSMutableArray array];
 }
 
+- (NSArray *) getGameBoard
+{
+    return mGameBoard;
+}
+
 - (NSString *) gameBoardToString
 {
     NSMutableString *toReturn = [NSMutableString string];

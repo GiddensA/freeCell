@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *) toString;
 
+- (NSString *) getCardImageString:(BOOL) isHighlighted;
+
 @end
 
 NS_ASSUME_NONNULL_END
