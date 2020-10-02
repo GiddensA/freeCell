@@ -36,6 +36,19 @@
     return self;
 }
 
+- (instancetype) initEmptyCard
+{
+    self = [super init];
+    if (self)
+    {
+        self->suit = -1;
+        self->value = -1;
+        self->isSelected = NO;
+        self->color = [utils GetCardColor:self->suit];
+    }
+    return self;
+}
+
 - (enum card_suit) getSuit
 {
     return self->suit;
@@ -101,7 +114,7 @@
 
 - (NSString *)getCardImageString
 {
-    return !self->isSelected ? [NSString stringWithFormat:@"card_%d_%d", self->value, self->suit] : [NSString stringWithFormat:@"card_%d_%d_highlight", self->value, self->suit];
+    return self->value == -1 ? @"cardCell" : !self->isSelected ? [NSString stringWithFormat:@"card_%d_%d", self->value, self->suit] : [NSString stringWithFormat:@"card_%d_%d_highlight", self->value, self->suit];
 }
 
 - (void) select {

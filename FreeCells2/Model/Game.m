@@ -8,7 +8,6 @@
 
 #import "Game.h"
 #import "LOG.h"
-#import "Deck.h"
 
 #define TAG "Game"
 
@@ -23,6 +22,7 @@
     struct Coord selectedPos;
     
     int freeCellCount;
+    int selectedFrecellIndex;
 }
 @end
 
@@ -36,8 +36,9 @@
         selectedPos.row = -1;
         selectedPos.column = -1;
         freeCellCount = 4;
-        freeCells = [NSMutableArray array];
-        orderedDeck = [NSMutableArray array];
+        selectedFrecellIndex = -1;
+        freeCells = [NSMutableArray arrayWithObjects:[[Card alloc] initEmptyCard], [[Card alloc] initEmptyCard],[[Card alloc] initEmptyCard],[[Card alloc] initEmptyCard], nil];
+        orderedDeck = [NSMutableArray arrayWithObjects:[[Card alloc] initEmptyCard], [[Card alloc] initEmptyCard],[[Card alloc] initEmptyCard],[[Card alloc] initEmptyCard], nil];
         lastRow = [NSMutableArray array];
         
         mDeck = [[Deck alloc] init];
@@ -53,15 +54,15 @@
     selectedPos.row = -1;
     selectedPos.column = -1;
     freeCellCount = 4;
-    freeCells = [NSMutableArray array];
-    orderedDeck = [NSMutableArray array];
+    selectedFrecellIndex = -1;
+    freeCells = [NSMutableArray arrayWithObjects:[[Card alloc] initEmptyCard], [[Card alloc] initEmptyCard],[[Card alloc] initEmptyCard],[[Card alloc] initEmptyCard], nil];
+    orderedDeck = [NSMutableArray arrayWithObjects:[[Card alloc] initEmptyCard], [[Card alloc] initEmptyCard],[[Card alloc] initEmptyCard],[[Card alloc] initEmptyCard], nil];
     lastRow = [NSMutableArray array];
     
     [mDeck resetDeck];
     [mDeck shuffle];
     
     [self setupGameBoard: NO];
-    
     
 }
 
@@ -153,9 +154,9 @@
 #endif
 }
 
-- (BOOL)moveCardsToRow:(int)tRow toClm:(int)tClm from:(NSArray *__autoreleasing *)fArr to:(NSArray *__autoreleasing *)tArr
+- (BOOL)moveCardsToRow:(int)tRow toClm:(int)tClm from:(NSArray **)fArr to:(NSArray  **)tArr
 {
-    LOG_MODOLE(TAG, @"Start move");
+    LOG_MODOLE(TAG, @"Start move selected %d,%d",selectedPos.row, selectedPos.column);
     if (selectedPos.row == -1 && selectedPos.column == -1)
     {
         LOG_MODOLE(TAG, @"Cannot move");
@@ -228,8 +229,17 @@
     return NO;
 }
 
+- (BOOL)moveCardFromFreeCellAtIndex:(int)index toClm:(int)tClm tRow:(id)tRow to:(NSArray * _Nullable __autoreleasing *)ptArr
+{
+    return NO;
+}
+
 - (BOOL) checkSelectionAtRow:(int)row column:(int)column
 {
+    if (selectedFrecellIndex != -1)
+    {
+        return NO;
+    }
     if (![mGameBoard[column][row] isEqual:lastRow[column]]) {
         NSArray<Card *> *clm = mGameBoard[column];
         for (int i = row; i < clm.count - 1; i++)
@@ -255,9 +265,59 @@
     return mGameBoard[column];
 }
 
+- (void)selectAtFreeCellIndex:(int)index
+{
+    if ([freeCells[index] getValue] != -1)
+    {
+        [freeCells[index] select];
+        selectedFrecellIndex = [freeCells[index] isSelected] ? index : -1;
+    }
+    LOG_MODOLE(TAG, @"selected free cell index = %d", selectedFrecellIndex);
+}
+
+- (BOOL)moveCardToFreeCellIndex:(int)index from:(NSArray **)pfArr
+{
+    int fRow = selectedPos.row;
+    int fClm = selectedPos.column;
+    if (fRow != -1 && fClm != -1)
+    {
+        if ([mGameBoard[fClm][fRow] isEqual:lastRow[fClm]] && [freeCells[index] getValue] == -1){
+            freeCells[index] = [mGameBoard[fClm] lastObject];
+            [self selectCardAtRow:fRow column:fClm];
+            [mGameBoard[fClm] removeLastObject];
+            lastRow[fClm] = [mGameBoard[fClm] lastObject];
+            *pfArr = mGameBoard[fClm];
+            freeCellCount -= 1;
+            selectedFrecellIndex = -1;
+#ifdef CHECK
+            [self printLastRow];
+            LOG_MODOLE(TAG, @"Board\n%@",[self gameBoardToString]);
+#endif
+            return YES;
+        }
+        else
+        {
+            [self selectCardAtRow:fRow column:fClm];
+            return NO;
+        }
+    }
+    [self selectCardAtRow:fRow column:fClm];
+    return YES;
+}
+
 - (struct Coord) getSelectCoord
 {
     return selectedPos;
+}
+
+- (Card *)getCardAtFreeCellIdx:(int)index
+{
+    return freeCells[index];
+}
+
+- (int)getSelectedFreeCellIdx
+{
+    return self->selectedFrecellIndex;
 }
 
 - (void) printLastRow

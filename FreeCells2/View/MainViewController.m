@@ -12,9 +12,17 @@
 #import "CardImageView.h"
 
 #import "Game.h"
-#import "Card.h"
 
 #define TAG "MainVC"
+
+enum card_view_type
+{
+    FREE_CELL_VIEW,
+    ORDERED_VIEW,
+    EMPTY_CARD_VIEW,
+    CARD_VIEW,
+    TYPE_MAX,
+};
 
 @interface MainViewController()
 {
@@ -155,6 +163,45 @@
 }
 
 - (IBAction)onFreeCellClicked:(CardImageView *)sender {
+    int index = (int)sender.index;
+    LOG_UI(TAG, @"clicked on free cell %d", index);
+    int fClm = [mGame getSelectCoord].column;
+    int fRow = [mGame getSelectCoord].row;
+    
+    if (fClm == -1 && fRow == -1)
+    {
+        // select card in free cell
+        [mGame selectAtFreeCellIndex:index];
+        if ([[mGame getCardAtFreeCellIdx:index] getValue] != -1)
+        {
+            [sender setImage:[NSImage imageNamed:[[mGame getCardAtFreeCellIdx:index] getCardImageString]]];
+        }
+    }
+    else
+    {
+        // move card to free cell
+        NSArray *from = mBoard[fClm];
+        BOOL canPlace = [mGame moveCardToFreeCellIndex:index from:&from];
+        mBoard[fClm] = from;
+        if (canPlace)
+        {
+            [sender setImage:[NSImage imageNamed:[[mGame getCardAtFreeCellIdx:index] getCardImageString]]];
+            [[mCardViewArr[fClm] lastObject] removeFromSuperview];
+            [mCardViewArr[fClm] removeLastObject];
+            
+            if (mCardViewArr[fClm].count > max_fixd_card_per_column)
+            {
+                [self realignCards:mCardViewArr[fClm]];
+            } else if ((int)mCardViewArr[fClm].count == max_fixd_card_per_column)
+            {
+                [self realignCardsToNormalGap:mCardViewArr[fClm]];
+            }
+        } else
+        {
+            [self selectCardAtRow:fRow column:fClm];
+            [utils ShowAlert:ILLEGAL_MOVE];
+        }
+    }
 }
 
 - (IBAction)onOrderedDeckClicked:(CardImageView *)sender {
@@ -175,15 +222,22 @@
     
     if (![mGame checkSelectionAtRow:row column:column])
     {
+        int selectedFreeCellIndex = [mGame getSelectedFreeCellIdx];
+        int fClm = [mGame getSelectCoord].column;
+        int fRow = [mGame getSelectCoord].row;
+        LOG_UI(TAG, @"selected free cell index %d, selected card = %d,%d", selectedFreeCellIndex, fRow, fClm);
         // nothing selected, skip
-        if ([mGame getSelectCoord].column == -1 || [mGame getSelectCoord].row == -1)
+        if (selectedFreeCellIndex == -1 && (fClm == -1 || fRow == -1) )
         {
+            return;
+        } else if (selectedFreeCellIndex != -1)
+        {
+            [[self getCardView:FREE_CELL_VIEW index:selectedFreeCellIndex] setImage:[NSImage imageNamed:[[mGame getCardAtFreeCellIdx:selectedFreeCellIndex] getCardImageString]]];
+            [utils ShowAlert:ILLEGAL_MOVE];
             return;
         }
         
         // move card
-        int fClm = [mGame getSelectCoord].column;
-        int fRow = [mGame getSelectCoord].row;
         NSArray *from = mBoard[fClm];
         NSArray *to = mBoard[column];
                        
@@ -195,7 +249,7 @@
         {
             LOG_UI(TAG, @"%@\n isSelected = %d", [c toString], [c isSelected]);
         }
-        LOG_UI(TAG, @"=================");
+        //LOG_UI(TAG, @"=================");
         for (Card *c in  mBoard[column])
         {
             LOG_UI(TAG, @"%@\n isSelected = %d", [c toString], [c isSelected]);
@@ -256,7 +310,6 @@
 {
     NSMutableArray<CardImageView *> *fromViews = mCardViewArr[fClm];
     NSMutableArray<CardImageView *> *toViews = mCardViewArr[tClm];
-    int originalFromCount = (int)fromViews.count;
     int originalToCount = (int)toViews.count;
     for (int i = fRow; i < fromViews.count; i++)
     {
@@ -273,7 +326,7 @@
     {
         [self realignCards:fromViews];
     }
-    else if (originalFromCount > max_fixd_card_per_column)
+    else if (fromViews.count ==  max_fixd_card_per_column)
     {
         [self realignCardsToNormalGap:fromViews];
     }
@@ -343,4 +396,40 @@
         }
     }
 }
+
+- (CardImageView *) getCardView:(enum card_view_type) type
+                          index:(int) idx
+{
+    switch (type) {
+        case FREE_CELL_VIEW:
+            switch (idx) {
+                case 0:
+                    return mFreeCell0;
+                case 1:
+                    return mFreeCell1;
+                case 2:
+                    return mFreeCell2;
+                case 3:
+                    return mFreeCell3;
+                default:
+                    return nil;
+            }
+        case ORDERED_VIEW:
+            switch (idx) {
+                case 0:
+                    return mOrderedDeck0;
+                case 1:
+                    return mOrderedDeck1;
+                case 2:
+                    return mOrderedDeck2;
+                case 3:
+                    return mOrderedDeck3;
+                default:
+                    return nil;
+            }
+        default:
+            return nil;
+    }
+}
+
 @end

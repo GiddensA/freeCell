@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype) initWithValue:(int) value
                           suit:(enum card_suit) suit;
 
+- (instancetype) initEmptyCard;
+
 - (enum card_suit) getSuit;
 
 - (enum card_color) getCardColor;

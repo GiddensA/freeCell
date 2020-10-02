@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Deck.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -34,8 +35,22 @@ struct Coord
 
 - (BOOL) moveCardsToRow:(int) tRow
                     toClm:(int) tClm
-                     from:(NSArray **) fArr
-                       to:(NSArray **) tArr;
+                   from:(NSArray *_Nullable*_Nullable) pfArr
+                     to:(NSArray *_Nullable*_Nullable) ptArr;
+
+- (BOOL) moveCardFromFreeCellAtIndex:(int) index
+                               toClm:(int) tClm
+                                tRow:tRow
+                                  to:(NSArray *_Nullable*_Nullable) ptArr;
+
+- (BOOL) moveCardToFreeCellIndex:(int) index
+                            from:(NSArray *_Nullable*_Nullable) pfArr;
+
+- (Card *) getCardAtFreeCellIdx:(int) index;
+
+- (void) selectAtFreeCellIndex:(int) index;
+
+- (int) getSelectedFreeCellIdx;
 @end
 
 NS_ASSUME_NONNULL_END
