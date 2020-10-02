@@ -21,6 +21,8 @@
     NSMutableArray<Card *> *lastRow;
     
     struct Coord selectedPos;
+    
+    int freeCellCount;
 }
 @end
 
@@ -33,6 +35,7 @@
     {
         selectedPos.row = -1;
         selectedPos.column = -1;
+        freeCellCount = 4;
         freeCells = [NSMutableArray array];
         orderedDeck = [NSMutableArray array];
         lastRow = [NSMutableArray array];
@@ -49,6 +52,7 @@
 {
     selectedPos.row = -1;
     selectedPos.column = -1;
+    freeCellCount = 4;
     freeCells = [NSMutableArray array];
     orderedDeck = [NSMutableArray array];
     lastRow = [NSMutableArray array];
@@ -186,12 +190,39 @@
             }
             else
             {
+                
                 [self selectCardAtRow:fRow column:fClm];
                 return NO;
             }
         } else {
+            LOG_MODOLE(TAG, @"move cards from (%d %d) to (%d %d)", fRow, fClm, tRow, tClm);
             // move a column of cards
-            
+            if ([from getValue] + 1 == [to getValue] && [from getCardColor] != [to getCardColor])
+            {
+                NSArray *subClm = [mGameBoard[fClm] subarrayWithRange:NSMakeRange(fRow, mGameBoard[fClm].count - fRow)];
+                BOOL hasFreeCell = [self checkFreeCells:subClm tagetColumn:fClm];
+                if (hasFreeCell)
+                {
+                    
+                    [mGameBoard[tClm] addObjectsFromArray:subClm];
+                    lastRow[tClm] = [mGameBoard[tClm] lastObject];
+                    [mGameBoard[fClm] removeObjectsInArray:subClm];
+                    lastRow[fClm] = [mGameBoard[fClm] lastObject];
+                    
+                    [self selectCardAtRow:tRow + 1 column:tClm];
+#ifdef CHECK
+                    [self printLastRow];
+                    LOG_MODOLE(TAG, @"Board\n%@",[self gameBoardToString]);
+#endif
+                    return YES;
+                }
+                return NO;
+            }
+            else
+            {
+                [self selectCardAtRow:fRow column:fClm];
+                return NO;
+            }
         }
     }
     return NO;
@@ -199,6 +230,15 @@
 
 - (BOOL) checkSelectionAtRow:(int)row column:(int)column
 {
+    if (![mGameBoard[column][row] isEqual:lastRow[column]]) {
+        NSArray<Card *> *clm = mGameBoard[column];
+        for (int i = row; i < clm.count - 1; i++)
+        {
+            LOG_MODOLE(TAG, @"i = %d, compare card %@ vs %@", i, [clm[i] toString], [clm[i + 1] toString]);
+            if ([clm[i] getValue] != [clm[i + 1] getValue] + 1 || [clm[i] getCardColor] == [clm[i + 1] getCardColor]) return NO;
+        }
+        return YES;
+    }
     return (selectedPos.row == -1 && selectedPos.column == -1) || (selectedPos.row == row && selectedPos.column == column);
 }
 
@@ -228,5 +268,39 @@
         [print appendFormat:@"%@\n", [lastRow[i] toString]];
     }
     LOG_MODOLE(TAG, @"%@]", print);
+}
+
+- (BOOL) checkFreeCells:(NSArray<Card *> *) clm tagetColumn:(int) column
+{
+    if (freeCellCount >= clm.count - 1)
+    {
+        // have enough free cells
+        LOG_MODOLE(TAG, @"has enough free cells %d move size = %d", freeCellCount, (int)clm.count);
+        return YES;
+    } else {
+        int cardNeedToPlace = (int)clm.count - freeCellCount - 1;
+        LOG_MODOLE(TAG, @"cards need to be placed %d", cardNeedToPlace);
+        NSMutableArray <Card *> *tmpLastRow = lastRow;
+        for (int i = 0; i < cardNeedToPlace; i ++)
+        {
+            Card *last = clm[clm.count - 1 - i];
+            LOG_MODOLE(TAG, @"check last card %@", [last toString]);
+            BOOL f = NO;
+            for (int j = 0; j < num_of_game_board_columns; j ++)
+            {
+                if ([tmpLastRow[j] getValue] == [last getValue] + 1 && [tmpLastRow[j] getCardColor] != [last getCardColor])
+                {
+                    f = YES;
+                    tmpLastRow[j] = last;
+                    break;
+                }
+            }
+            if (!f)
+            {
+                return NO;
+            }
+        }
+    }
+    return YES;
 }
 @end

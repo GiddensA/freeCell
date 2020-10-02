@@ -175,11 +175,18 @@
     
     if (![mGame checkSelectionAtRow:row column:column])
     {
+        // nothing selected, skip
+        if ([mGame getSelectCoord].column == -1 || [mGame getSelectCoord].row == -1)
+        {
+            return;
+        }
+        
         // move card
         int fClm = [mGame getSelectCoord].column;
         int fRow = [mGame getSelectCoord].row;
         NSArray *from = mBoard[fClm];
         NSArray *to = mBoard[column];
+                       
         BOOL canMove = [mGame moveCardsToRow:row toClm:column from:&from to:&to];
         mBoard[fClm] = from;
         mBoard[column] = to;
@@ -249,6 +256,7 @@
 {
     NSMutableArray<CardImageView *> *fromViews = mCardViewArr[fClm];
     NSMutableArray<CardImageView *> *toViews = mCardViewArr[tClm];
+    int originalFromCount = (int)fromViews.count;
     int originalToCount = (int)toViews.count;
     for (int i = fRow; i < fromViews.count; i++)
     {
@@ -264,6 +272,10 @@
     if (fromViews.count > max_fixd_card_per_column)
     {
         [self realignCards:fromViews];
+    }
+    else if (originalFromCount > max_fixd_card_per_column)
+    {
+        [self realignCardsToNormalGap:fromViews];
     }
     
     if (toViews.count > max_fixd_card_per_column)
@@ -291,7 +303,34 @@
 
 - (void) realignCards:(NSMutableArray<CardImageView *> *) cards
 {
+    CGFloat verticalGap = ((game_board_height - card_height) * 1.0f) / cards.count;
+    CGFloat start_x = cards[0].frame.origin.x;
+    CGFloat start_y = game_board_height - card_height;
+    LOG_UI(TAG, @"re-align cards with vertical gap = %f", verticalGap);
     
+    for (CardImageView *view in cards)
+    {
+        [view setFrame:CGRectMake(start_x,
+                                  start_y - view.row * verticalGap,
+                                  card_width,
+                                  card_height)];
+        [mGameBoardView addSubview:view];
+    }
+    
+}
+
+- (void) realignCardsToNormalGap:(NSMutableArray<CardImageView *> *) cards
+{
+    LOG_UI(TAG, @"re-align cards to normal cap");
+    int start_x = cards[0].frame.origin.x;
+    int start_y = game_board_height - card_height;
+    for (CardImageView *view in cards)
+    {
+        [view setFrame:CGRectMake(start_x,
+                                  start_y - view.row * card_vertical_overlap_gap,
+                                  card_width,
+                                  card_height)];
+    }
 }
 
 - (void) removeAllCardViews

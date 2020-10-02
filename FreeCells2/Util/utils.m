@@ -50,7 +50,7 @@
     
     switch (type) {
         case ILLEGAL_MOVE:
-            message = @"Illega Move!";
+            message = @"Illegal Move!";
             info = @"You cannot place card(s) here!";
             buttonTitle = @"Got you";
             iconName = @"icon";
