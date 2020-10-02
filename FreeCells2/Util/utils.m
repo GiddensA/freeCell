@@ -7,6 +7,7 @@
 //
 
 #import "utils.h"
+#import <AppKit/AppKit.h>
 
 @implementation utils
 + (enum card_color) GetCardColor:(enum card_suit) suit
@@ -38,5 +39,30 @@
         [space appendString:@" "];
     }
     return [NSString stringWithFormat:@"%@%@", str, space];
+}
+
++ (void) ShowAlert:(enum alert_type) type
+{
+    NSString *message;
+    NSString *info;
+    NSString *buttonTitle;
+    NSString *iconName;
+    
+    switch (type) {
+        case ILLEGAL_MOVE:
+            message = @"Illega Move!";
+            info = @"You cannot place card(s) here!";
+            buttonTitle = @"Got you";
+            iconName = @"icon";
+            break;
+            
+    }
+    
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:message];
+    [alert setInformativeText:info];
+    [alert addButtonWithTitle:buttonTitle];
+    [alert setIcon:[NSImage imageNamed:iconName]];
+    [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:nil];
 }
 @end

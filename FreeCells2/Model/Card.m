@@ -113,4 +113,9 @@
     return self->isSelected;
 }
 
+- (BOOL)isEqual:(Card *)otherCard
+{
+    return self->suit == [otherCard getSuit] && self->value == [otherCard getValue];
+}
+
 @end

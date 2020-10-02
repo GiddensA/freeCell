@@ -16,7 +16,6 @@
     // Drawing code here.
 }
 
-
 - (void) mouseDown:(NSEvent *)theEvent
 {
     [NSApp sendAction:[self action] to:[self target] from:self];

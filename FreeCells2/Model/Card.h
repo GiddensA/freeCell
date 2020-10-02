@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) select;
 
 - (BOOL) isSelected;
+
+- (BOOL) isEqual:(Card *)otherCard;
 @end
 
 NS_ASSUME_NONNULL_END

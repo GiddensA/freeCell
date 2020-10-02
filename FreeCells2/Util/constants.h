@@ -9,6 +9,8 @@
 #ifndef constants_h
 #define constants_h
 
+#define CHECK
+
 static const CGFloat window_width = 1200.f;
 static const CGFloat window_height = 700.f;
 
@@ -19,6 +21,7 @@ static const int num_of_cards_per_deck = num_of_cards_per_suit * num_of_suits;
 static const int num_of_game_board_columns = 8;
 static const int max_length_card_string = 20;
 const static int max_num_of_cards_per_column = 7;
+const static int max_fixd_card_per_column = 8;
 
 const static CGFloat top_cell_area_height = 218; //do not change this unless storyboard is changed.
 
@@ -51,6 +54,10 @@ enum card_color {
     CARD_COLOR_RED,
     CARD_COLOR_BLACK,
     CARD_COLOR_MAX,
+};
+
+enum alert_type {
+    ILLEGAL_MOVE,
 };
 
 #endif /* constants_h */

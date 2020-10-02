@@ -136,6 +136,8 @@
 }
 
 - (IBAction)onIndicatorClicked:(NSButton *)sender {
+    [self removeAllCardViews];
+    
     [mGame resetGame];
     mBoard = [NSMutableArray arrayWithArray:[mGame getGameBoard]];
     mCardViewArr = [NSMutableArray array];
@@ -174,17 +176,38 @@
     if (![mGame checkSelectionAtRow:row column:column])
     {
         // move card
+        int fClm = [mGame getSelectCoord].column;
+        int fRow = [mGame getSelectCoord].row;
+        NSArray *from = mBoard[fClm];
+        NSArray *to = mBoard[column];
+        BOOL canMove = [mGame moveCardsToRow:row toClm:column from:&from to:&to];
+        mBoard[fClm] = from;
+        mBoard[column] = to;
+#ifdef CHECK
+        for (Card *c in mBoard[fClm])
+        {
+            LOG_UI(TAG, @"%@\n isSelected = %d", [c toString], [c isSelected]);
+        }
+        LOG_UI(TAG, @"=================");
+        for (Card *c in  mBoard[column])
+        {
+            LOG_UI(TAG, @"%@\n isSelected = %d", [c toString], [c isSelected]);
+        }
+#endif
+        if (canMove)
+        {
+            [self moveCardViewsFromRow:fRow fromColumn:fClm toRow:row toColumn:column];
+            [self selectCardAtRow:row column:column];
+        } else {
+            [self selectCardAtRow:fRow column:fClm];
+            [utils ShowAlert:ILLEGAL_MOVE];
+        }
         return;
     } else {
         // select card(s)
         mBoard[column] = [mGame selectCardAtRow:row column:column];
-        for (int i = row; i < mBoard[column].count; i++)
-        {
-            [mCardViewArr[column][i] setImage:[NSImage imageNamed:[mBoard[column][i] getCardImageString]]];
-        }
+        [self selectCardAtRow:row column:column];
     }
-    
-   
 }
 
 - (void) onCardRightClickedDown:(CardImageView *) card
@@ -211,6 +234,74 @@
         [view removeFromSuperview];
         [mGameBoardView addSubview:view positioned:NSWindowBelow relativeTo:mCardViewArr[column][row + 1]];
         
+    }
+}
+
+- (void) selectCardAtRow:(int) row column:(int) column
+{
+    for (int i = row; i < mBoard[column].count; i++)
+    {
+        [mCardViewArr[column][i] setImage:[NSImage imageNamed:[mBoard[column][i] getCardImageString]]];
+    }
+}
+
+- (void) moveCardViewsFromRow:(int)fRow fromColumn:(int) fClm toRow:(int) tRow toColumn:(int) tClm
+{
+    NSMutableArray<CardImageView *> *fromViews = mCardViewArr[fClm];
+    NSMutableArray<CardImageView *> *toViews = mCardViewArr[tClm];
+    int originalToCount = (int)toViews.count;
+    for (int i = fRow; i < fromViews.count; i++)
+    {
+        fromViews[i].column = tClm;
+        fromViews[i].row = (int)toViews.count;
+        
+        [toViews addObject:fromViews[i]];
+    }
+    
+    [fromViews removeObjectsInRange:NSMakeRange(fRow, fromViews.count - fRow)];
+    
+    
+    if (fromViews.count > max_fixd_card_per_column)
+    {
+        [self realignCards:fromViews];
+    }
+    
+    if (toViews.count > max_fixd_card_per_column)
+    {
+        [self realignCards:toViews];
+    } else
+    {
+        CGFloat start_x = (gap_between_cards + card_width) * tClm;
+        CGFloat start_y = game_board_height - card_height - ((originalToCount - 1)* card_vertical_overlap_gap);
+        for (int i = originalToCount; i < toViews.count; i++)
+        {
+            [toViews[i] setFrame:CGRectMake(start_x,
+                                            start_y - card_vertical_overlap_gap,
+                                            card_width,
+                                            card_height)];
+            [mGameBoardView addSubview:toViews[i]];
+            [toViews[i] becomeFirstResponder];
+            start_y -= card_vertical_overlap_gap;
+        }
+    }
+        
+    mCardViewArr[fClm] = fromViews;
+    mCardViewArr[tClm] = toViews;
+}
+
+- (void) realignCards:(NSMutableArray<CardImageView *> *) cards
+{
+    
+}
+
+- (void) removeAllCardViews
+{
+    for (NSMutableArray <CardImageView *> *arr in mCardViewArr)
+    {
+        for (CardImageView *view in arr)
+        {
+            [view removeFromSuperview];
+        }
     }
 }
 @end

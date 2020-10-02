@@ -10,6 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+struct Coord
+{
+    int row;
+    int column;
+};
+
 @interface Game : NSObject
 
 - (instancetype) init;
@@ -23,6 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL) checkSelectionAtRow:(int) row column:(int) column;
 
 - (NSArray *) selectCardAtRow:(int) row column:(int) column;
+
+- (struct Coord) getSelectCoord;
+
+- (BOOL) moveCardsToRow:(int) tRow
+                    toClm:(int) tClm
+                     from:(NSArray **) fArr
+                       to:(NSArray **) tArr;
 @end
 
 NS_ASSUME_NONNULL_END
