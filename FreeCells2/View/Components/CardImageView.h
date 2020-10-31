@@ -21,6 +21,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property BOOL isCardViewOnGameBoard;
 
 - (void) updateView:(CGFloat) verticalGap imageStr:(nullable NSString *) imgStr;
+
+- (void) updateViewFrame:(CGRect) frame;
+
+- (void) setSuperView:(NSView *) view;
 @end
 
 NS_ASSUME_NONNULL_END

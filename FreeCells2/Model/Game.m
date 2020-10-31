@@ -22,7 +22,6 @@
     struct Coord selectedPos;
     
     int freeCellCount;
-    int selectedFrecellIndex;
 }
 @end
 
@@ -77,13 +76,13 @@
     return self->orderedDeck;
 }
 
-- (void) placeCardToGameBard:(NSView *)gameboard
+- (void) placeCardToGameBard:(NSView *)gameboard superView:(NSView *) superView
 {
     for (int i = 0; i < num_of_game_board_columns; i ++)
     {
         for (Card *card in mGameBoard[i])
         {
-            [card placeCardToGameBoard:gameboard gameDelegate:_mGameDelegate];
+            [card placeCardToGameBoard:gameboard superView:superView gameDelegate:_mGameDelegate];
         }
     }
 }
@@ -209,8 +208,7 @@
             {
                 [from setColumn:tClm row:tRow + 1];
                 [mGameBoard[tClm] addObject:from];
-                [self updateColumn:tClm];
-                [self updateColumn:fClm];
+                
             }
             
 //            if (fRow == 0)
@@ -223,11 +221,14 @@
                 [from select];
                 [mGameBoard[fClm] removeObjectAtIndex:fRow];
 //            }
+            [self updateColumn:tClm];
+            [self updateColumn:fClm];
+            
             lastRow[tClm] = from;
             lastRow[fClm] = [mGameBoard[fClm] lastObject];
             
-            selectedPos.column = -1;
-            selectedPos.row = -1;
+            selectedPos.column = selected_pos_default_val;
+            selectedPos.row = selected_pos_default_val;
            
             LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
             [self printLastRow];
@@ -267,8 +268,8 @@
                 [self updateColumn:tClm];
                 [self updateColumn:fClm];
                 
-                selectedPos.column = -1;
-                selectedPos.row = -1;
+                selectedPos.column = selected_pos_default_val;
+                selectedPos.row = selected_pos_default_val;
             }
             else
             {
@@ -290,27 +291,27 @@
 - (BOOL)moveCardFromFreeCellToClm:(int)tClm tRow:(int)tRow to:(NSArray * _Nullable __autoreleasing *)ptArr
 {
     LOG_MODOLE(TAG, @"move free cell to column %d row %d", tClm, tRow);
-    Card *from = freeCells[selectedFrecellIndex];
-    Card *to = mGameBoard[tClm][tRow];
-    [from select];
-    if (tRow != mGameBoard[tClm].count - 1)
-    {
-        LOG_MODOLE(TAG, @"illegal move: not placed at the end of a column %d row %d", tClm, tRow);
-        selectedFrecellIndex = -1;
-        return NO;
-    }
-    if ([lastRow[tClm] getValue] == -1 || ([from getValue] + 1 == [to getValue] && [from getCardColor] != [to getCardColor]))
-    {
-        LOG_MODOLE(TAG, @"move to column %d", tClm);
-        [mGameBoard[tClm] addObject:from];
-        *ptArr = mGameBoard[tClm];
-        lastRow[tClm] = from;
-        freeCells[selectedFrecellIndex] = [[Card alloc] initEmptyCard];
-        freeCellCount -= 1;
-        selectedFrecellIndex = -1;
-        return YES;
-    }
-    selectedFrecellIndex = -1;
+//    Card *from = freeCells[selectedFrecellIndex];
+//    Card *to = mGameBoard[tClm][tRow];
+//    [from select];
+//    if (tRow != mGameBoard[tClm].count - 1)
+//    {
+//        LOG_MODOLE(TAG, @"illegal move: not placed at the end of a column %d row %d", tClm, tRow);
+//        selectedFrecellIndex = -1;
+//        return NO;
+//    }
+//    if ([lastRow[tClm] getValue] == -1 || ([from getValue] + 1 == [to getValue] && [from getCardColor] != [to getCardColor]))
+//    {
+//        LOG_MODOLE(TAG, @"move to column %d", tClm);
+//        [mGameBoard[tClm] addObject:from];
+//        *ptArr = mGameBoard[tClm];
+//        lastRow[tClm] = from;
+//        freeCells[selectedFrecellIndex] = [[Card alloc] initEmptyCard];
+//        freeCellCount -= 1;
+//        selectedFrecellIndex = -1;
+//        return YES;
+//    }
+//    selectedFrecellIndex = -1;
     return NO;
 }
 
@@ -329,18 +330,24 @@
 {
     
     // case 1: move card from free cell to gameboard
-    //         selectedFrecellIndex != -1
-    //         selectedPos == {-1, -1}
-    if (selectedFrecellIndex != -1)
+    //         selectedPos = {free_cell_row_index, freecellIndex}
+    //         row != free_cell_row_index
+    if (selectedPos.row == free_cell_row_index && selectedPos.column != selected_pos_default_val && row != free_cell_row_index)
     {
-        LOG_MODOLE(TAG, @"seelect card case 1");
+        LOG_MODOLE(TAG, @"select card case 1");
     }
-    // case 2: select card
-    //         selectedFrecellIndex == -1
-    //         selectedPos == {-1, -1}
-    else if (selectedPos.column == -1 && selectedPos.row == -1)
+    // case 2: change the position in free cell
+    //         selectedPos = {free_cell_row_index, freecellIndex}
+    //         row == free_cell_row_index
+    else if (selectedPos.row == free_cell_row_index && selectedPos.column != selected_pos_default_val && row == free_cell_row_index)
     {
-        LOG_MODOLE(TAG, @"seelect card case 2");
+        LOG_MODOLE(TAG, @"select card case 2")
+    }
+    // case 3: select card
+    //         selectedPos == {-1, -1}
+    else if (selectedPos.column == selected_pos_default_val && selectedPos.row == selected_pos_default_val && row != free_cell_row_index)
+    {
+        LOG_MODOLE(TAG, @"select card case 3");
         if ([mGameBoard[column][row] isEmptyCard]) return; 
         // check if can select at row clm
         // case 1: selected at the last card
@@ -368,12 +375,11 @@
             }
         }
     }
-    // case 3: deselect card
-    //         selectedFrecellIndex == -1
+    // case 4: deselect card
     //         selectedPos == {row, column}
     else if (selectedPos.row == row && selectedPos.column == column)
     {
-        LOG_MODOLE(TAG, @"seelect card case 3");
+        LOG_MODOLE(TAG, @"select card case 4");
         int size = (int) mGameBoard[column].count;
         for (int i = row; i < size; i++)
         {
@@ -382,58 +388,68 @@
         selectedPos.row = -1;
         selectedPos.column = -1;
     }
-    // case 4: move card in game board
-    //         selectedFrecellIndex != -1
-    //         selectedPos != {-1, -1}
-    else
+    // case 5: move card in game board
+    //         selectedPos.row != free_cell_row_index
+    //         selectedPos != {default, default}
+    else if (selectedPos.column >= 0 && selectedPos.row >= 0 && row != free_cell_row_index)
     {
-        LOG_MODOLE(TAG, @"seelect card case 4");
+        LOG_MODOLE(TAG, @"seelect card case 5");
         [self moveCardsToRow:row toClm:column];
+    }
+    // case 6: move card to free cells
+    //         selectedPos.row != free_cell_row_index
+    //         selectedPos != {default, default}
+    //         row == free_cell_column_index
+    else if (selectedPos.column >= 0 && selectedPos.row >= 0 && row == free_cell_row_index)
+    {
+        LOG_MODOLE(TAG, @"select card case 6");
+        // place card to free cell if the cell is empty
+        // and only one card is selected
+        Card *from = mGameBoard[selectedPos.column][selectedPos.row];
+        if ([freeCells[column] isEmptyCard] && [lastRow[selectedPos.column] isEqual:from])
+        {
+            [self moveCardToFreeCellIndex:column from:selectedPos.column];
+            selectedPos.column = selected_pos_default_val;
+            selectedPos.row = selected_pos_default_val;
+        }
+        else
+        {
+            [self selectCardAtRow:selectedPos.row column:selectedPos.column];
+            [utils ShowAlert:ILLEGAL_MOVE];
+        }
+        
+        selectedPos.column = selected_pos_default_val;
+        selectedPos.row = selected_pos_default_val;
+    }
+    // case 7: select card in free cell
+    //         row == free_cell_column_index
+    //         selectedPos == {default, default}
+    else if (selectedPos.column == selected_pos_default_val && selectedPos.row == selected_pos_default_val && row == free_cell_row_index)
+    {
+       LOG_MODOLE(TAG, @"select card case 7")
     }
 }
 
 - (void)selectAtFreeCellIndex:(int)index
 {
-    if ([freeCells[index] getValue] != -1)
-    {
-        [freeCells[index] select];
-        selectedFrecellIndex = [freeCells[index] isSelected] ? index : -1;
-    }
-    LOG_MODOLE(TAG, @"selected free cell index = %d", selectedFrecellIndex);
+//    if ([freeCells[index] getValue] != -1)
+//    {
+//        [freeCells[index] select];
+//        selectedFrecellIndex = [freeCells[index] isSelected] ? index : -1;
+//    }
+//    LOG_MODOLE(TAG, @"selected free cell index = %d", selectedFrecellIndex);
 }
 
-- (BOOL)moveCardToFreeCellIndex:(int)index from:(NSArray **)pfArr
+- (void)moveCardToFreeCellIndex:(int)index from:(int) fClm
 {
+    Card *from = [mGameBoard[fClm] lastObject];
+    freeCells[index] = from;
+    [from setColumn:index row:free_cell_row_index];
+    [from select];
+    [mGameBoard[fClm] removeLastObject];
     
-    int fRow = selectedPos.row;
-    int fClm = selectedPos.column;
-    if (fRow != -1 && fClm != -1)
-    {
-        if ([mGameBoard[fClm][fRow] isEqual:lastRow[fClm]] && [freeCells[index] getValue] == -1){
-            freeCells[index] = [mGameBoard[fClm] lastObject];
-            [self selectCardAtRow:fRow column:fClm];
-            [mGameBoard[fClm] removeLastObject];
-            lastRow[fClm] = [mGameBoard[fClm] lastObject];
-            *pfArr = mGameBoard[fClm];
-            freeCellCount -= 1;
-            selectedFrecellIndex = -1;
-#ifdef CHECK
-            [self printLastRow];
-            LOG_MODOLE(TAG, @"Board\n%@",[self gameBoardToString]);
-#endif
-            return YES;
-        }
-        else
-        {
-            [self selectCardAtRow:fRow column:fClm];
-            return NO;
-        }
-    } else if (selectedFrecellIndex != -1)
-    {
-        //if ()
-    }
-    [self selectCardAtRow:fRow column:fClm];
-    return YES;
+    [self updateColumn:fClm];
+    [from placeCardToFreeCell:index];
 }
 
 - (struct Coord) getSelectCoord
@@ -448,7 +464,7 @@
 
 - (int)getSelectedFreeCellIdx
 {
-    return self->selectedFrecellIndex;
+    return 1;//self->selectedFrecellIndex;
 }
 
 - (void) printLastRow
@@ -502,10 +518,9 @@
 
 - (void) initParameters
 {
-    selectedPos.row = -1;
-    selectedPos.column = -1;
+    selectedPos.row = selected_pos_default_val;
+    selectedPos.column = selected_pos_default_val;
     freeCellCount = 4;
-    selectedFrecellIndex = -1;
 }
 
 - (void) updateColumn:(int) clm

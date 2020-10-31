@@ -12,7 +12,14 @@
 
 #define TAG "CardImageView"
 
+@interface CardImageView()
+{
+    NSView *superView;
+}
+@end
+
 @implementation CardImageView
+
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
@@ -53,6 +60,18 @@
         }
         LOG_UI(TAG, @"card image %@ row %ld colum %ld", imgString, self.row, self.column);
     }
+}
+
+- (void) updateViewFrame:(CGRect)frame
+{
+    [self setFrame:frame];
+    [self removeFromSuperview];
+    [self->superView addSubview:self];
+}
+
+- (void) setSuperView:(NSView *)view
+{
+    self->superView = view;
 }
 
 @end

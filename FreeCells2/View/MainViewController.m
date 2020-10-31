@@ -72,7 +72,7 @@ enum card_view_type
 
 - (void)viewDidLoad {
     [self.view addTrackingArea:mTrackingArea];
-    mFreeCells = [NSMutableArray arrayWithObjects:mFreeCell0, mFreeCell1, mFreeCell2, mFreeCell3, nil];
+    mFreeCells = [NSMutableArray arrayWithObjects:mFreeCell0, mFreeCell1, mFreeCell2, mFreeCell3, nil];    
     mOrderedCells = [NSMutableArray arrayWithObjects:mOrderedDeck0, mOrderedDeck1, mOrderedDeck2, mOrderedDeck3, nil];
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -144,7 +144,7 @@ enum card_view_type
         }
     }*/
     
-    [mGame placeCardToGameBard:self->mGameBoardView];
+    [mGame placeCardToGameBard:self->mGameBoardView superView:self.view];
 }
 
 - (IBAction)onIndicatorClicked:(NSButton *)sender {
@@ -158,6 +158,7 @@ enum card_view_type
 - (IBAction)onFreeCellClicked:(CardImageView *)sender {
     int index = (int)sender.index;
     LOG_UI(TAG, @"clicked on free cell %d", index);
+    [mGame selectCardAtRow:free_cell_row_index column:index];
 }
 
 - (IBAction)onOrderedDeckClicked:(CardImageView *)sender {

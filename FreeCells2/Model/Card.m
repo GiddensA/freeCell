@@ -41,6 +41,7 @@
         self->coordInBoard.row = -1;
         
         mCardView = [CardImageView imageViewWithImage:[NSImage imageNamed:[self getCardImageString]]];
+        [mCardView setImageScaling:NSImageScaleAxesIndependently];
         [mCardView setFrameSize:CGSizeMake(card_width, card_height)];
     }
     return self;
@@ -189,21 +190,29 @@
 
 - (void)updateCardPositionWithColumnSize:(NSInteger)size
 {
-    LOG_MODOLE(TAG, @"column size = %d", size);
+    LOG_MODOLE(TAG, @"column size = %ld", (long)size);
     [self->mCardView updateView:[utils GetOverlapSizeWithColumnSize:size] imageStr:nil];
 }
 
-- (void) placeCardToGameBoard:(NSView *)gameboard gameDelegate:(id<GameDelegate>) delegate
+- (void) placeCardToGameBoard:(NSView *)gameboard superView:(NSView *) view gameDelegate:(id<GameDelegate>) delegate
 {
     [gameboard addSubview:self->mCardView];
     self->mCardDelegate = delegate;
     self->mCardView.accessibilityParent = gameboard;
+    [self->mCardView setSuperView:view];
     self->mCardView.target = self;
     self->mCardView.action = @selector(onCardClicked:);
     self->mCardView.rightMouseUpAction = @selector(onCardRightClickedUp:);
     self->mCardView.rightMouseDownAction = @selector(onCardRightClickedDown:);
     self->mCardView.isCardViewOnGameBoard = YES;
     [self->mCardView updateView:card_vertical_overlap_gap imageStr:[self getCardImageString]];
+}
+
+- (void) placeCardToFreeCell:(int)index
+{
+    LOG_UI(TAG, @"frame = {(%f, %f) (%f %f)}", free_cell_x[index], free_cell_y, free_cell_width, free_cell_height);
+    CGRect rect = CGRectMake(free_cell_x[index], free_cell_y, free_cell_width, free_cell_height);
+    [self->mCardView updateViewFrame:rect];
 }
 
 - (void) onCardClicked:(CardImageView *) cardView

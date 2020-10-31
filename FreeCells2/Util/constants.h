@@ -23,6 +23,8 @@ static const int num_of_game_board_columns = 8;
 static const int max_length_card_string = 20;
 const static int max_num_of_cards_per_column = 7;
 const static int max_fixd_card_per_column = 8;
+const static int free_cell_row_index = -1;
+const static int selected_pos_default_val = -100;
 
 const static CGFloat top_cell_area_height = 218; //do not change this unless storyboard is changed.
 
@@ -43,6 +45,10 @@ const static CGFloat choicePickerViewWidth = 330.0f;
 const static CGFloat choicePickerViewHeight = 150.0f;
 const static CGFloat gap_between_cards = (game_board_width - (card_width * num_of_game_board_columns)) * 1.0f / ((num_of_game_board_columns - 1) * 1.0f);
 
+const static CGFloat free_cell_y = 512.0f;
+const static CGFloat free_cell_x[4] = {42.0f, 164.0f, 286.0f, 408.0f};
+const static CGFloat free_cell_width = 111.0f;
+const static CGFloat free_cell_height = 166.0f;
 
 enum card_suit {
     SUIT_SPADE,

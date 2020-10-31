@@ -47,9 +47,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (struct Coord) getCoordInBoard;
 
-- (void) placeCardToGameBoard:(NSView *) gameboard gameDelegate:(id<GameDelegate>) delegate;
+- (void) placeCardToGameBoard:(NSView *) gameboard superView:(NSView *) view gameDelegate:(id<GameDelegate>) delegate;
 
 - (void) updateCardPositionWithColumnSize:(NSInteger) size;
+
+- (void) placeCardToFreeCell:(int) index;
 
 - (CardImageView *) getCardView;
 
