@@ -8,6 +8,7 @@
 
 #import "Card.h"
 
+#define TAG "Card"
 
 @interface Card()
 {
@@ -15,7 +16,11 @@
     enum card_color color;
     int value;
     BOOL isSelected;
+    struct Coord coordInBoard;
+    
+    CardImageView *mCardView;
 
+    id<GameDelegate> mCardDelegate;
 }
 @end
 @implementation Card
@@ -32,6 +37,11 @@
         
         self->color = [utils GetCardColor:self->suit];
         
+        self->coordInBoard.column = -1;
+        self->coordInBoard.row = -1;
+        
+        mCardView = [CardImageView imageViewWithImage:[NSImage imageNamed:[self getCardImageString]]];
+        [mCardView setFrameSize:CGSizeMake(card_width, card_height)];
     }
     return self;
 }
@@ -45,6 +55,9 @@
         self->value = -1;
         self->isSelected = NO;
         self->color = [utils GetCardColor:self->suit];
+        
+        self->coordInBoard.column = -1;
+        self->coordInBoard.row = -1;
     }
     return self;
 }
@@ -119,6 +132,7 @@
 
 - (void) select {
     self->isSelected = !self->isSelected;
+    [mCardView setImage:[NSImage imageNamed:[self getCardImageString]]];
 }
 
 - (BOOL)isSelected
@@ -131,4 +145,79 @@
     return self->suit == [otherCard getSuit] && self->value == [otherCard getValue];
 }
 
+- (BOOL)isEmptyCard
+{
+    return self->value == -1;
+}
+
+- (void) makeEmptyCard
+{
+    self->value = self->suit = -1;
+    self->color = [utils GetCardColor:self->suit];
+    
+    isSelected = NO;
+    
+    [mCardView setImage:[NSImage imageNamed:[self getCardImageString]]];
+}
+
+- (void) makeCardToOther:(Card *)card
+{
+    self->suit = [card getSuit];
+    self->value = [card getValue];
+    self->color = [utils GetCardColor:self->suit];
+    
+    self->isSelected = NO;
+}
+
+- (void)setColumn:(int)clm row:(int)row
+{
+    self->coordInBoard.column = clm;
+    self->mCardView.column = clm;
+    self->coordInBoard.row = row;
+    self->mCardView.row = row;
+}
+
+- (struct Coord)getCoordInBoard
+{
+    return self->coordInBoard;
+}
+
+- (CardImageView *) getCardView
+{
+    return mCardView;
+}
+
+- (void)updateCardPositionWithColumnSize:(NSInteger)size
+{
+    LOG_MODOLE(TAG, @"column size = %d", size);
+    [self->mCardView updateView:[utils GetOverlapSizeWithColumnSize:size] imageStr:nil];
+}
+
+- (void) placeCardToGameBoard:(NSView *)gameboard gameDelegate:(id<GameDelegate>) delegate
+{
+    [gameboard addSubview:self->mCardView];
+    self->mCardDelegate = delegate;
+    self->mCardView.accessibilityParent = gameboard;
+    self->mCardView.target = self;
+    self->mCardView.action = @selector(onCardClicked:);
+    self->mCardView.rightMouseUpAction = @selector(onCardRightClickedUp:);
+    self->mCardView.rightMouseDownAction = @selector(onCardRightClickedDown:);
+    self->mCardView.isCardViewOnGameBoard = YES;
+    [self->mCardView updateView:card_vertical_overlap_gap imageStr:[self getCardImageString]];
+}
+
+- (void) onCardClicked:(CardImageView *) cardView
+{
+    [self->mCardDelegate onCardClicked:cardView];
+}
+
+- (void) onCardRightClickedUp:(CardImageView *) cardView
+{
+    [self->mCardDelegate onCardRightClickedUp:cardView nextCardView:[_nextCardInColumn getCardView]];
+}
+
+- (void) onCardRightClickedDown:(CardImageView *) cardView
+{
+    [self->mCardDelegate onCardRightClickedDown:cardView];
+}
 @end

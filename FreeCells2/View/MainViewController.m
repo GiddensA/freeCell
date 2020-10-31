@@ -9,9 +9,8 @@
 #import "MainViewController.h"
 #import "utils.h"
 #import "LOG.h"
-#import "CardImageView.h"
+#import "GameDelegate.h"
 
-#import "Game.h"
 
 #define TAG "MainVC"
 
@@ -24,7 +23,7 @@ enum card_view_type
     TYPE_MAX,
 };
 
-@interface MainViewController()
+@interface MainViewController()<GameDelegate>
 {
     IBOutlet NSButton *mIndoicator;
     IBOutlet CardImageView *mFreeCell0;
@@ -42,8 +41,10 @@ enum card_view_type
     Game *mGame;
     NSMutableArray<NSArray <Card *> *> *mBoard;
     NSMutableArray<NSMutableArray<CardImageView *> *> *mCardViewArr;
+    NSMutableArray<CardImageView *> *mFreeCells;
+    NSMutableArray<CardImageView *> *mOrderedCells;
     
-    CGFloat gap_between_cards;
+    
     
 }
 @end
@@ -60,20 +61,22 @@ enum card_view_type
                                                     userInfo:nil];
         
         mGame = [[Game alloc] init];
+        mGame.mGameDelegate = self;
         mBoard = [NSMutableArray arrayWithArray:[mGame getGameBoard]];
         
         mCardViewArr = [NSMutableArray array];
         
-        gap_between_cards = (game_board_width - (card_width * num_of_game_board_columns)) * 1.0f / ((num_of_game_board_columns - 1) * 1.0f);
     }
     return self;
 }
 
 - (void)viewDidLoad {
     [self.view addTrackingArea:mTrackingArea];
+    mFreeCells = [NSMutableArray arrayWithObjects:mFreeCell0, mFreeCell1, mFreeCell2, mFreeCell3, nil];
+    mOrderedCells = [NSMutableArray arrayWithObjects:mOrderedDeck0, mOrderedDeck1, mOrderedDeck2, mOrderedDeck3, nil];
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self setupBoard];
+    [self layoutCards];
     
 }
 
@@ -89,47 +92,41 @@ enum card_view_type
     }
 }
 
-- (void) setupBoard
-{
-    // setup empty card first
-    LOG_UI(TAG, @"gap between cards = %f", gap_between_cards);
-    
-    for (int i = 0; i < num_of_game_board_columns; i ++)
-    {
-        CardImageView *emptyCardView = [CardImageView imageViewWithImage:[NSImage imageNamed:@"cardCell"]];
-        [emptyCardView setFrame:CGRectMake(i * (card_width + gap_between_cards),
-                                           game_board_height - card_height,
-                                           card_width,
-                                           card_height)];
-        emptyCardView.index = i;
-        [emptyCardView setTarget:self];
-        [emptyCardView setAction:@selector(onEmptyCardClicked:)];
-        
-        [mGameBoardView addSubview:emptyCardView];
-    }
-    [self layoutCards];
-}
-
 - (void) layoutCards
 {
+
+    /*NSArray <Card *> *freeCells = [mGame getFreeCells];
+    NSArray <Card *> *orderedCells = [mGame getOrderedDeck];
+    
+    for (int i = 0; i < num_of_free_cells; i++)
+    {
+        mFreeCells[i].mCard = freeCells[i];
+        mFreeCells[i].isCardViewOnGameBoard = NO;
+        [mFreeCells[i] updateView:0];
+    }
+    
+    for (int i = 0; i < num_of_suits; i++)
+    {
+        mOrderedCells[i].mCard = orderedCells[i];
+        mOrderedCells[i].isCardViewOnGameBoard = NO;
+        [mOrderedCells[i] updateView:0];
+    }
+    
     for(int i = 0; i < num_of_game_board_columns; i ++)
     {
-        NSArray <Card *> *column = mBoard[i];
+        NSArray<NSArray <Card *> *> *board = [mGame getGameBoard];
+        NSArray<Card *> *column = board[i];
         NSMutableArray<CardImageView *> *cardViewColumn = [NSMutableArray array];
-        
-        CGFloat start_x = i * (card_width + gap_between_cards);
-        CGFloat start_y = game_board_height - card_height;
         
         int row = 0;
         for (Card *card in column)
         {
-            CardImageView *viewCard = [CardImageView imageViewWithImage:[NSImage imageNamed:[card getCardImageString]]];
-            [viewCard setFrame:CGRectMake(start_x,
-                                          start_y - card_vertical_overlap_gap * row,
-                                          card_width,
-                                          card_height)];
-            viewCard.row = row;
-            viewCard.column = i;
+            LOG_UI(TAG, @"clm %d %@", i, card);
+            CardImageView *viewCard = [[CardImageView alloc] init];
+            viewCard.mCard = card;
+            viewCard.isCardViewOnGameBoard = YES;
+            [viewCard updateView:card_vertical_overlap_gap];
+            
             viewCard.canRightClick = YES;
             viewCard.target = self;
             viewCard.action = @selector(onCardClicked:);
@@ -139,79 +136,31 @@ enum card_view_type
             [cardViewColumn addObject:viewCard];
             row ++;
         }
-        [mCardViewArr addObject:cardViewColumn];
-    }
+        if (mCardViewArr != nil)
+        {
+            mCardViewArr[i] = cardViewColumn;
+        } else {
+            [mCardViewArr addObject:cardViewColumn];
+        }
+    }*/
+    
+    [mGame placeCardToGameBard:self->mGameBoardView];
 }
 
 - (IBAction)onIndicatorClicked:(NSButton *)sender {
     [self removeAllCardViews];
     
     [mGame resetGame];
-    mBoard = [NSMutableArray arrayWithArray:[mGame getGameBoard]];
-    mCardViewArr = [NSMutableArray array];
     [self layoutCards];
-    
-    [mFreeCell0 setImage:[NSImage imageNamed:@"cardCell"]];
-    [mFreeCell1 setImage:[NSImage imageNamed:@"cardCell"]];
-    [mFreeCell2 setImage:[NSImage imageNamed:@"cardCell"]];
-    [mFreeCell3 setImage:[NSImage imageNamed:@"cardCell"]];
-    
-    [mOrderedDeck0 setImage:[NSImage imageNamed:@"cardCell"]];
-    [mOrderedDeck1 setImage:[NSImage imageNamed:@"cardCell"]];
-    [mOrderedDeck2 setImage:[NSImage imageNamed:@"cardCell"]];
-    [mOrderedDeck3 setImage:[NSImage imageNamed:@"cardCell"]];
+
 }
 
 - (IBAction)onFreeCellClicked:(CardImageView *)sender {
     int index = (int)sender.index;
     LOG_UI(TAG, @"clicked on free cell %d", index);
-    int fClm = [mGame getSelectCoord].column;
-    int fRow = [mGame getSelectCoord].row;
-    
-    if (fClm == -1 && fRow == -1)
-    {
-        // select card in free cell
-        [mGame selectAtFreeCellIndex:index];
-        if ([[mGame getCardAtFreeCellIdx:index] getValue] != -1)
-        {
-            [sender setImage:[NSImage imageNamed:[[mGame getCardAtFreeCellIdx:index] getCardImageString]]];
-        }
-    }
-    else
-    {
-        // move card to free cell
-        NSArray *from = mBoard[fClm];
-        BOOL canPlace = [mGame moveCardToFreeCellIndex:index from:&from];
-        mBoard[fClm] = from;
-        if (canPlace)
-        {
-            [sender setImage:[NSImage imageNamed:[[mGame getCardAtFreeCellIdx:index] getCardImageString]]];
-            [[mCardViewArr[fClm] lastObject] removeFromSuperview];
-            [mCardViewArr[fClm] removeLastObject];
-            
-            if (mCardViewArr[fClm].count > max_fixd_card_per_column)
-            {
-                [self realignCards:mCardViewArr[fClm]];
-            } else if ((int)mCardViewArr[fClm].count == max_fixd_card_per_column)
-            {
-                [self realignCardsToNormalGap:mCardViewArr[fClm]];
-            }
-        } else
-        {
-            [self selectCardAtRow:fRow column:fClm];
-            [utils ShowAlert:ILLEGAL_MOVE];
-        }
-    }
 }
 
 - (IBAction)onOrderedDeckClicked:(CardImageView *)sender {
-}
-
-
-- (void) onEmptyCardClicked:(CardImageView *) emptyCardView
-{
-    int index = (int)emptyCardView.index;
-    LOG_UI(TAG, @"clicked on empty card %d", index);
 }
 
 - (void) onCardClicked:(CardImageView *) card
@@ -220,55 +169,7 @@ enum card_view_type
     int column = (int)card.column;
     LOG_UI(TAG, @"clicked on card %d %d", row, column);
     
-    if (![mGame checkSelectionAtRow:row column:column])
-    {
-        int selectedFreeCellIndex = [mGame getSelectedFreeCellIdx];
-        int fClm = [mGame getSelectCoord].column;
-        int fRow = [mGame getSelectCoord].row;
-        LOG_UI(TAG, @"selected free cell index %d, selected card = %d,%d", selectedFreeCellIndex, fRow, fClm);
-        // nothing selected, skip
-        if (selectedFreeCellIndex == -1 && (fClm == -1 || fRow == -1) )
-        {
-            return;
-        } else if (selectedFreeCellIndex != -1)
-        {
-            [[self getCardView:FREE_CELL_VIEW index:selectedFreeCellIndex] setImage:[NSImage imageNamed:[[mGame getCardAtFreeCellIdx:selectedFreeCellIndex] getCardImageString]]];
-            [utils ShowAlert:ILLEGAL_MOVE];
-            return;
-        }
-        
-        // move card
-        NSArray *from = mBoard[fClm];
-        NSArray *to = mBoard[column];
-                       
-        BOOL canMove = [mGame moveCardsToRow:row toClm:column from:&from to:&to];
-        mBoard[fClm] = from;
-        mBoard[column] = to;
-#ifdef CHECK
-        for (Card *c in mBoard[fClm])
-        {
-            LOG_UI(TAG, @"%@\n isSelected = %d", [c toString], [c isSelected]);
-        }
-        //LOG_UI(TAG, @"=================");
-        for (Card *c in  mBoard[column])
-        {
-            LOG_UI(TAG, @"%@\n isSelected = %d", [c toString], [c isSelected]);
-        }
-#endif
-        if (canMove)
-        {
-            [self moveCardViewsFromRow:fRow fromColumn:fClm toRow:row toColumn:column];
-            [self selectCardAtRow:row column:column];
-        } else {
-            [self selectCardAtRow:fRow column:fClm];
-            [utils ShowAlert:ILLEGAL_MOVE];
-        }
-        return;
-    } else {
-        // select card(s)
-        mBoard[column] = [mGame selectCardAtRow:row column:column];
-        [self selectCardAtRow:row column:column];
-    }
+    [mGame selectCardAtRow:row column:column];
 }
 
 - (void) onCardRightClickedDown:(CardImageView *) card
@@ -277,112 +178,21 @@ enum card_view_type
     int column = (int)card.column;
     LOG_UI(TAG, @"right clicked down on card %d %d", row, column);
     
-    if (row < mCardViewArr[column].count - 1) {
-        CardImageView *view = mCardViewArr[column][row];
-        [mGameBoardView addSubview:view];
-        [view becomeFirstResponder];
-    }
+    [mGameBoardView addSubview:card];
+    [card becomeFirstResponder];
+   
 }
 
-- (void) onCardRightClickedUp:(CardImageView *) card
+- (void) onCardRightClickedUp:(CardImageView *) card nextCardView:(CardImageView *)nextCard
 {
     int row = (int)card.row;
     int column = (int)card.column;
-    LOG_UI(TAG, @"right clicked up on card %d %d", row, column);
+    LOG_UI(TAG, @"right clicked up on card %d %d next card %@", row, column, nextCard);
     
-    if (row < mCardViewArr[column].count - 1) {
-        CardImageView *view = mCardViewArr[column][row];
-        [view removeFromSuperview];
-        [mGameBoardView addSubview:view positioned:NSWindowBelow relativeTo:mCardViewArr[column][row + 1]];
+    if (nil != nextCard) {
+        [card removeFromSuperview];
+        [mGameBoardView addSubview:card positioned:NSWindowBelow relativeTo:nextCard];
         
-    }
-}
-
-- (void) selectCardAtRow:(int) row column:(int) column
-{
-    for (int i = row; i < mBoard[column].count; i++)
-    {
-        [mCardViewArr[column][i] setImage:[NSImage imageNamed:[mBoard[column][i] getCardImageString]]];
-    }
-}
-
-- (void) moveCardViewsFromRow:(int)fRow fromColumn:(int) fClm toRow:(int) tRow toColumn:(int) tClm
-{
-    NSMutableArray<CardImageView *> *fromViews = mCardViewArr[fClm];
-    NSMutableArray<CardImageView *> *toViews = mCardViewArr[tClm];
-    int originalToCount = (int)toViews.count;
-    for (int i = fRow; i < fromViews.count; i++)
-    {
-        fromViews[i].column = tClm;
-        fromViews[i].row = (int)toViews.count;
-        
-        [toViews addObject:fromViews[i]];
-    }
-    
-    [fromViews removeObjectsInRange:NSMakeRange(fRow, fromViews.count - fRow)];
-    
-    
-    if (fromViews.count > max_fixd_card_per_column)
-    {
-        [self realignCards:fromViews];
-    }
-    else if (fromViews.count ==  max_fixd_card_per_column)
-    {
-        [self realignCardsToNormalGap:fromViews];
-    }
-    
-    if (toViews.count > max_fixd_card_per_column)
-    {
-        [self realignCards:toViews];
-    } else
-    {
-        CGFloat start_x = (gap_between_cards + card_width) * tClm;
-        CGFloat start_y = game_board_height - card_height - ((originalToCount - 1)* card_vertical_overlap_gap);
-        for (int i = originalToCount; i < toViews.count; i++)
-        {
-            [toViews[i] setFrame:CGRectMake(start_x,
-                                            start_y - card_vertical_overlap_gap,
-                                            card_width,
-                                            card_height)];
-            [mGameBoardView addSubview:toViews[i]];
-            [toViews[i] becomeFirstResponder];
-            start_y -= card_vertical_overlap_gap;
-        }
-    }
-        
-    mCardViewArr[fClm] = fromViews;
-    mCardViewArr[tClm] = toViews;
-}
-
-- (void) realignCards:(NSMutableArray<CardImageView *> *) cards
-{
-    CGFloat verticalGap = ((game_board_height - card_height) * 1.0f) / cards.count;
-    CGFloat start_x = cards[0].frame.origin.x;
-    CGFloat start_y = game_board_height - card_height;
-    LOG_UI(TAG, @"re-align cards with vertical gap = %f", verticalGap);
-    
-    for (CardImageView *view in cards)
-    {
-        [view setFrame:CGRectMake(start_x,
-                                  start_y - view.row * verticalGap,
-                                  card_width,
-                                  card_height)];
-        [mGameBoardView addSubview:view];
-    }
-    
-}
-
-- (void) realignCardsToNormalGap:(NSMutableArray<CardImageView *> *) cards
-{
-    LOG_UI(TAG, @"re-align cards to normal cap");
-    int start_x = cards[0].frame.origin.x;
-    int start_y = game_board_height - card_height;
-    for (CardImageView *view in cards)
-    {
-        [view setFrame:CGRectMake(start_x,
-                                  start_y - view.row * card_vertical_overlap_gap,
-                                  card_width,
-                                  card_height)];
     }
 }
 
@@ -397,39 +207,47 @@ enum card_view_type
     }
 }
 
-- (CardImageView *) getCardView:(enum card_view_type) type
-                          index:(int) idx
+- (void)updateGameBoardAtColumn:(int)clm row:(int)row columnSize:(int)size
 {
-    switch (type) {
-        case FREE_CELL_VIEW:
-            switch (idx) {
-                case 0:
-                    return mFreeCell0;
-                case 1:
-                    return mFreeCell1;
-                case 2:
-                    return mFreeCell2;
-                case 3:
-                    return mFreeCell3;
-                default:
-                    return nil;
-            }
-        case ORDERED_VIEW:
-            switch (idx) {
-                case 0:
-                    return mOrderedDeck0;
-                case 1:
-                    return mOrderedDeck1;
-                case 2:
-                    return mOrderedDeck2;
-                case 3:
-                    return mOrderedDeck3;
-                default:
-                    return nil;
-            }
-        default:
-            return nil;
-    }
+    LOG_UI(TAG, @"update %d %d size %d",clm, row, size);
+//    for (int i = row; i < size; i ++)
+//    {
+//        [mCardViewArr[clm][i] updateView:-1];
+//    }
+}
+
+- (void)moveCardFromColumn:(int)fClm fromRow:(int)fRow columnSize:(int) size toColumn:(int)tClm toRow:(int)tRow
+{
+//    LOG_UI(TAG, @"move card from row %d column %d size %d to row %d column %d", fRow, fClm, size, tRow, tClm);
+//    NSArray<CardImageView *> *from = [mCardViewArr[fClm] subarrayWithRange:NSMakeRange(fRow, size-fRow)];
+//    LOG_UI(TAG, @"from size = %ld", from.count);
+//    if (tRow > 0)
+//    {
+//        [mCardViewArr[tClm] addObjectsFromArray:from];
+//    }
+//    if (size > 1)
+//    {
+//        [mCardViewArr[fClm] removeObjectsInRange:NSMakeRange(fRow, size-fRow)];
+//    }
+//    
+//    // calculate gap
+//    int tSize = (int)mCardViewArr[tClm].count;
+//    CGFloat verticalGap = card_vertical_overlap_gap;
+//    if (tSize > max_fixd_card_per_column)
+//    {
+//        verticalGap = (game_board_height - card_width) / (tSize * 1.0f);
+//    }
+//    LOG_UI(TAG, @"vertical gap = %f", verticalGap);
+//    for (CardImageView *view in mCardViewArr[tClm])
+//    {
+//        [view updateView:verticalGap];
+//        [mGameBoardView addSubview:view];
+//    }
+//    
+//    if (size == 1)
+//    {
+//        [from[0] updateView:verticalGap];
+//    }
 }
 
 @end

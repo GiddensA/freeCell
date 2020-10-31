@@ -17,6 +17,7 @@ static const CGFloat window_height = 700.f;
 static const int num_of_decks = 1;
 static const int num_of_cards_per_suit = 13;
 static const int num_of_suits = 4;
+static const int num_of_free_cells = 4;
 static const int num_of_cards_per_deck = num_of_cards_per_suit * num_of_suits;
 static const int num_of_game_board_columns = 8;
 static const int max_length_card_string = 20;
@@ -40,6 +41,7 @@ const static CGFloat card_width = card_image_width * card_size_ratio;
 const static CGFloat card_height = card_image_height * card_size_ratio;
 const static CGFloat choicePickerViewWidth = 330.0f;
 const static CGFloat choicePickerViewHeight = 150.0f;
+const static CGFloat gap_between_cards = (game_board_width - (card_width * num_of_game_board_columns)) * 1.0f / ((num_of_game_board_columns - 1) * 1.0f);
 
 
 enum card_suit {
@@ -58,6 +60,12 @@ enum card_color {
 
 enum alert_type {
     ILLEGAL_MOVE,
+};
+
+struct Coord
+{
+    int row;
+    int column;
 };
 
 #endif /* constants_h */

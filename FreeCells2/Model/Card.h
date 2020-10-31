@@ -7,11 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CardImageView.h"
+#import "GameDelegate.h"
 #import "utils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Card : NSObject
+@property Card * nextCardInColumn;
 
 - (instancetype) initWithValue:(int) value
                           suit:(enum card_suit) suit;
@@ -28,11 +31,28 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *) getCardImageString;
 
+- (void) makeEmptyCard;
+
+- (void) makeCardToOther:(Card *) card;
+
 - (void) select;
 
 - (BOOL) isSelected;
 
 - (BOOL) isEqual:(Card *)otherCard;
+
+- (BOOL) isEmptyCard;
+
+- (void) setColumn:(int) clm row:(int) row;
+
+- (struct Coord) getCoordInBoard;
+
+- (void) placeCardToGameBoard:(NSView *) gameboard gameDelegate:(id<GameDelegate>) delegate;
+
+- (void) updateCardPositionWithColumnSize:(NSInteger) size;
+
+- (CardImageView *) getCardView;
+
 @end
 
 NS_ASSUME_NONNULL_END

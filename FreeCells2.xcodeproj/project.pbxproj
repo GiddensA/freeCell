@@ -20,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E7615AE4252F314E000082BA /* GameDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameDelegate.h; sourceTree = "<group>"; };
 		E768065625273E740098BC94 /* CardImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CardImageView.h; sourceTree = "<group>"; };
 		E768065725273E740098BC94 /* CardImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardImageView.m; sourceTree = "<group>"; };
 		E77E0AEA252610800029010A /* LOG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LOG.h; sourceTree = "<group>"; };
@@ -124,6 +125,7 @@
 			children = (
 				E7BD071E25260A9D00D0528E /* AppDelegate.h */,
 				E7BD071F25260A9D00D0528E /* AppDelegate.m */,
+				E7615AE4252F314E000082BA /* GameDelegate.h */,
 			);
 			path = Delegate;
 			sourceTree = "<group>";

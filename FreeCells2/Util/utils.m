@@ -65,4 +65,13 @@
     [alert setIcon:[NSImage imageNamed:iconName]];
     [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:nil];
 }
+
++ (CGFloat) GetOverlapSizeWithColumnSize:(NSInteger)size
+{
+    if (size <= max_fixd_card_per_column)
+    {
+        return card_vertical_overlap_gap;
+    }
+    return (game_board_height - card_height) / (size * 1.0f);
+}
 @end

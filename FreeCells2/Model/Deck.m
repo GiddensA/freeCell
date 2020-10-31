@@ -13,6 +13,7 @@
 @interface Deck()
 {
     NSMutableArray<Card *> *deck;
+    NSMutableArray<NSNumber *> *index;
     BOOL isShuffled;
 }
 @end
@@ -35,11 +36,11 @@
 
 - (Card *)dealCard
 {
-    if (self->deck.count == 0) return nil;
-    int index = isShuffled ? [utils GetRandomIntFrom:0 to:(int) self->deck.count - 1] : 0;
-    Card *card = self->deck[index];
-    LOG_MODOLE(TAG, @"deal card at current index %d, with deck size = %ld, card %@", index, self->deck.count, [card toString]);
-    [self->deck removeObjectAtIndex:index];
+    if (self->index.count == 0) return nil;
+    int idx = isShuffled ? [utils GetRandomIntFrom:0 to:(int) self->index.count - 1] : 0;
+    Card *card = self->deck[[self->index[idx] intValue]];
+    LOG_MODOLE(TAG, @"deal card at current index %d, with deck size = %ld, card %@", idx, self->index.count, [card toString]);
+    [self->index removeObjectAtIndex:idx];
     return card;
 }
 
@@ -53,16 +54,24 @@
 
 - (void) resetDeck
 {
-    self->deck = [NSMutableArray array];
-    int suit = 0;
+    if (deck == nil)
+    {
+        self->deck = [NSMutableArray array];
+        int suit = 0;
+        for (int i = 0; i < num_of_cards_per_deck; i++)
+        {
+            int value = i % num_of_cards_per_suit + 1;
+            [self->deck addObject:[[Card alloc] initWithValue:value suit: suit]];
+            if (value == num_of_cards_per_suit)
+            {
+                suit ++;
+            }
+        }
+    }
+    self->index = [NSMutableArray array];
     for (int i = 0; i < num_of_cards_per_deck; i++)
     {
-        int value = i % num_of_cards_per_suit + 1;
-        [self->deck addObject:[[Card alloc] initWithValue:value suit: suit]];
-        if (value == num_of_cards_per_suit)
-        {
-            suit ++;
-        }
+        [self->index addObject:[NSNumber numberWithInt:i]];
     }
     self->isShuffled = NO;
 }

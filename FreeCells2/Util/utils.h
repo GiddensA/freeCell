@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *) GetSpaces:(NSString *) str;
 
 + (void) ShowAlert:(enum alert_type) type;
+
++ (CGFloat) GetOverlapSizeWithColumnSize:(NSInteger) size;
 @end
 
 NS_ASSUME_NONNULL_END

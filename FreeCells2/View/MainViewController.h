@@ -7,9 +7,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "Game.h"
 
 @interface MainViewController : NSViewController
-
 
 @end
 

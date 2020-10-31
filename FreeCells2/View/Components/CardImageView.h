@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CardImageView : NSImageView
@@ -17,6 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) IBInspectable BOOL canRightClick;
 @property (nullable) SEL rightMouseDownAction;
 @property (nullable) SEL rightMouseUpAction;
+@property BOOL isCardViewOnGameBoard;
+
+- (void) updateView:(CGFloat) verticalGap imageStr:(nullable NSString *) imgStr;
 @end
 
 NS_ASSUME_NONNULL_END
