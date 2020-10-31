@@ -210,6 +210,7 @@
                 [from setColumn:tClm row:tRow + 1];
                 [mGameBoard[tClm] addObject:from];
                 [self updateColumn:tClm];
+                [self updateColumn:fClm];
             }
             
 //            if (fRow == 0)
@@ -264,6 +265,7 @@
                 lastRow[fClm] = [mGameBoard[fClm] lastObject];
                 lastRow[tClm] = [mGameBoard[tClm] lastObject];
                 [self updateColumn:tClm];
+                [self updateColumn:fClm];
                 
                 selectedPos.column = -1;
                 selectedPos.row = -1;
