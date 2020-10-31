@@ -298,6 +298,8 @@
     
     [self updateColumn:tClm];
     
+    freeCellCount += 1;
+    
 }
 
 - (BOOL) checkSelectionAtRow:(int)row column:(int)column
@@ -450,16 +452,6 @@
     [self printLastRow];
 }
 
-- (void)selectAtFreeCellIndex:(int)index
-{
-//    if ([freeCells[index] getValue] != -1)
-//    {
-//        [freeCells[index] select];
-//        selectedFrecellIndex = [freeCells[index] isSelected] ? index : -1;
-//    }
-//    LOG_MODOLE(TAG, @"selected free cell index = %d", selectedFrecellIndex);
-}
-
 - (void)moveCardToFreeCellIndex:(int)index from:(int) fClm
 {
     Card *from = [mGameBoard[fClm] lastObject];
@@ -471,6 +463,8 @@
     
     [self updateColumn:fClm];
     [from placeCardToFreeCell:index];
+     
+    freeCellCount -= 1;
 }
 
 - (struct Coord) getSelectCoord
