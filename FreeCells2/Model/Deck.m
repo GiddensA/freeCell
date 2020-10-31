@@ -39,7 +39,7 @@
     if (self->index.count == 0) return nil;
     int idx = isShuffled ? [utils GetRandomIntFrom:0 to:(int) self->index.count - 1] : 0;
     Card *card = self->deck[[self->index[idx] intValue]];
-    LOG_MODOLE(TAG, @"deal card at current index %d, with deck size = %ld, card %@", idx, self->index.count, [card toString]);
+//    LOG_MODOLE(TAG, @"deal card at current index %d, with deck size = %ld, card %@", idx, self->index.count, [card toString]);
     [self->index removeObjectAtIndex:idx];
     return card;
 }

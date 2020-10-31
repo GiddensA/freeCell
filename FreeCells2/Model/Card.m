@@ -190,7 +190,6 @@
 
 - (void)updateCardPositionWithColumnSize:(NSInteger)size
 {
-    LOG_MODOLE(TAG, @"column size = %ld", (long)size);
     [self->mCardView updateView:[utils GetOverlapSizeWithColumnSize:size] imageStr:nil];
 }
 

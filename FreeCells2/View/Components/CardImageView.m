@@ -58,7 +58,7 @@
                                       card_height)];
             [self.accessibilityParent addSubview:self];
         }
-        LOG_UI(TAG, @"card image %@ row %ld colum %ld", imgString, self.row, self.column);
+//         LOG_UI(TAG, @"card image %@ row %ld colum %ld", imgString, self.row, self.column);
     }
 }
 
