@@ -349,7 +349,29 @@
     else if (selectedPos.row == free_cell_row_index && selectedPos.column != selected_pos_default_val
              && selectedPos.column != column && row == free_cell_row_index)
     {
-        LOG_MODOLE(TAG, @"select card case 2")
+        LOG_MODOLE(TAG, @"select card case 2");
+        if ([freeCells[column] isEmptyCard])
+        {
+            // exchange position if clicked free cell is available
+            int fClm = selectedPos.column;
+            Card *from = freeCells[fClm];
+            freeCells[column] = from;
+            [from setColumn:column row:free_cell_row_index];
+            freeCells[fClm] = [[Card alloc] initEmptyCard];
+            [from select];
+            [from placeCardToFreeCell:column];
+            
+            selectedPos.column = selected_pos_default_val;
+            selectedPos.row = selected_pos_default_val;
+        }
+        else
+        {
+            // change the selection
+            [freeCells[selectedPos.column] select];
+            [freeCells[column] select];
+            
+            selectedPos.column = column;
+        }
     }
     // case 3: select card
     //         selectedPos == {-1, -1}

@@ -64,6 +64,7 @@
 
 - (void) updateViewFrame:(CGRect)frame
 {
+    LOG_UI(TAG, @"test");
     [self setFrame:frame];
     [self removeFromSuperview];
     [self->superView addSubview:self];
