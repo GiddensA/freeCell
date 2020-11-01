@@ -18,12 +18,14 @@ static const int num_of_decks = 1;
 static const int num_of_cards_per_suit = 13;
 static const int num_of_suits = 4;
 static const int num_of_free_cells = 4;
+static const int num_of_ordered_cells = 4;
 static const int num_of_cards_per_deck = num_of_cards_per_suit * num_of_suits;
 static const int num_of_game_board_columns = 8;
 static const int max_length_card_string = 20;
 const static int max_num_of_cards_per_column = 7;
 const static int max_fixd_card_per_column = 8;
 const static int free_cell_row_index = -1;
+const static int ordered_cell_row_index = -2;
 const static int selected_pos_default_val = -100;
 
 const static CGFloat top_cell_area_height = 218; //do not change this unless storyboard is changed.

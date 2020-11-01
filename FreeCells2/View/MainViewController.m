@@ -144,7 +144,7 @@ enum card_view_type
         }
     }*/
     
-    [mGame placeCardToGameBard:self->mGameBoardView superView:self.view];
+    [mGame placeCardToGameBard:self->mGameBoardView superView:self.view orderedCells:mOrderedCells];
 }
 
 - (IBAction)onIndicatorClicked:(NSButton *)sender {
@@ -162,6 +162,9 @@ enum card_view_type
 }
 
 - (IBAction)onOrderedDeckClicked:(CardImageView *)sender {
+    int index = (int)sender.index;
+    LOG_UI(TAG, @"clicked on ordered cell %d", index);
+    [mGame selectCardAtRow:ordered_cell_row_index column:index];
 }
 
 - (void) onCardClicked:(CardImageView *) card

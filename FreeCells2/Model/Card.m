@@ -214,6 +214,11 @@
     [self->mCardView updateViewFrame:rect];
 }
 
+- (void) moveOutFromGameboard
+{
+    [self->mCardView removeFromSuperview];
+}
+
 - (void) onCardClicked:(CardImageView *) cardView
 {
     [self->mCardDelegate onCardClicked:cardView];

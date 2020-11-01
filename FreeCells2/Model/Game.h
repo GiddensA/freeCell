@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) placeCardToOrderedDeckAtIndex:(int) index;
 
-- (void) placeCardToGameBard:(NSView *) gameboard superView:(NSView *) superView;
+- (void) placeCardToGameBard:(NSView *) gameboard superView:(NSView *) superView orderedCells:(NSMutableArray *) cells;
 
 @end
 

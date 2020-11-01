@@ -53,6 +53,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) placeCardToFreeCell:(int) index;
 
+- (void) moveOutFromGameboard;
+
 - (CardImageView *) getCardView;
 
 @end

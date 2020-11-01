@@ -19,6 +19,8 @@
     NSMutableArray<Card *> *orderedDeck;
     NSMutableArray<Card *> *lastRow;
     
+    NSMutableArray<CardImageView *> *orderedCells;
+    
     struct Coord selectedPos;
     
     int freeCellCount;
@@ -58,7 +60,11 @@
     [mDeck shuffle];
     
     [self setupGameBoard: NO];
-    
+
+    for (int i = 0; i < num_of_ordered_cells; i++)
+    {
+        [orderedCells[i] setImage:[NSImage imageNamed:[orderedDeck[i] getCardImageString]]];
+    }
 }
 
 - (NSArray *) getGameBoard
@@ -76,7 +82,7 @@
     return self->orderedDeck;
 }
 
-- (void) placeCardToGameBard:(NSView *)gameboard superView:(NSView *) superView
+- (void) placeCardToGameBard:(NSView *)gameboard superView:(NSView *) superView orderedCells:(NSMutableArray<CardImageView *> *)cells
 {
     for (int i = 0; i < num_of_game_board_columns; i ++)
     {
@@ -85,6 +91,8 @@
             [card placeCardToGameBoard:gameboard superView:superView gameDelegate:_mGameDelegate];
         }
     }
+    
+    orderedCells = cells;
 }
 
 - (NSString *) gameBoardToString
@@ -319,7 +327,7 @@
     // case 1: move card from free cell to gameboard
     //         selectedPos = {free_cell_row_index, freecellIndex}
     //         row != free_cell_row_index
-    if (selectedPos.row == free_cell_row_index && selectedPos.column != selected_pos_default_val && row != free_cell_row_index)
+    if (selectedPos.row == free_cell_row_index && selectedPos.column != selected_pos_default_val && row != free_cell_row_index && row != ordered_cell_row_index)
     {
         LOG_MODOLE(TAG, @"select card case 1");
         // show alert if is not clicked at the last row
@@ -338,6 +346,9 @@
         else
         {
             [self moveCardFromFreeCellToClm:column tRow:row];
+            
+            LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
+            [self printLastRow];
         }
         
         selectedPos.column = selected_pos_default_val;
@@ -375,7 +386,7 @@
     }
     // case 3: select card
     //         selectedPos == {-1, -1}
-    else if (selectedPos.column == selected_pos_default_val && selectedPos.row == selected_pos_default_val && row != free_cell_row_index)
+    else if (selectedPos.column == selected_pos_default_val && selectedPos.row == selected_pos_default_val && row != free_cell_row_index && row != ordered_cell_row_index)
     {
         LOG_MODOLE(TAG, @"select card case 3");
         if ([mGameBoard[column][row] isEmptyCard]) return; 
@@ -407,7 +418,7 @@
     }
     // case 4: deselect card on board
     //         selectedPos == {row, column}
-    else if (selectedPos.row == row && selectedPos.column == column && row != free_cell_row_index)
+    else if (selectedPos.row == row && selectedPos.column == column && row != free_cell_row_index && row != ordered_cell_row_index)
     {
         LOG_MODOLE(TAG, @"select card case 4");
         int size = (int) mGameBoard[column].count;
@@ -421,10 +432,13 @@
     // case 5: move card in game board
     //         selectedPos.row != free_cell_row_index
     //         selectedPos != {default, default}
-    else if (selectedPos.column >= 0 && selectedPos.row >= 0 && row != free_cell_row_index)
+    else if (selectedPos.column >= 0 && selectedPos.row >= 0 && row != free_cell_row_index && row != ordered_cell_row_index)
     {
-        LOG_MODOLE(TAG, @"seelect card case 5");
+        LOG_MODOLE(TAG, @"select card case 5");
         [self moveCardsToRow:row toClm:column];
+        
+        LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
+        [self printLastRow];
     }
     // case 6: move card to free cells
     //         selectedPos.row != free_cell_row_index
@@ -448,6 +462,9 @@
         
         selectedPos.column = selected_pos_default_val;
         selectedPos.row = selected_pos_default_val;
+        
+        LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
+        [self printLastRow];
     }
     // case 7: select card in free cell
     //         row == free_cell_column_index
@@ -469,9 +486,46 @@
         selectedPos.column = selected_pos_default_val;
         selectedPos.row = selected_pos_default_val;
     }
-    
-    LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
-    [self printLastRow];
+    // case 9: move card to ordered cell from gameboard
+    //         row == ordered_cell_row_index
+    //         selectedPos != {default, default}
+    else if (selectedPos.column != selected_pos_default_val && selectedPos.row >= 0 && row == ordered_cell_row_index)
+    {
+        LOG_MODOLE(TAG, @"select card case 9");
+        if (selectedPos.row == mGameBoard[selectedPos.column].count - 1)
+        {
+            [self moveCardToOrderedCell:column from:selectedPos.column];
+        }
+    }
+    // case 10: move card to ordered cell from free cell
+    //          row == ordered_cell_row_index
+    // 
+    else if (selectedPos.column != selected_pos_default_val && selectedPos.row == free_cell_row_index && row == ordered_cell_row_index)
+    {
+        LOG_MODOLE(TAG, @"select card case 10");
+
+        Card *from = freeCells[selectedPos.column];
+        Card *target = orderedDeck[column];
+        
+        if (([target isEmptyCard] && [from getValue] == 1) ||
+            ([target getSuit] == [from getSuit] && [target getValue] + 1 == [from getSuit]))
+        {
+            orderedDeck[column] = from;
+            [from select];
+            
+            [orderedCells[column] setImage:[NSImage imageNamed:[from getCardImageString]]];
+            
+            freeCells[selectedPos.column] = [[Card alloc] initEmptyCard];
+            [from moveOutFromGameboard];
+        }
+        else
+        {
+            [from select];
+        }
+        
+        selectedPos.column = selected_pos_default_val;
+        selectedPos.row = selected_pos_default_val;
+    }
 }
 
 - (void)moveCardToFreeCellIndex:(int)index from:(int) fClm
@@ -487,6 +541,30 @@
     [from placeCardToFreeCell:index];
      
     freeCellCount -= 1;
+}
+
+- (void) moveCardToOrderedCell:(int) index from:(int) fClm
+{
+    Card *from = [mGameBoard[fClm] lastObject];
+    Card *target = orderedDeck[index];
+
+    if (([target isEmptyCard] && [from getValue] == 1) ||
+        ([target getSuit] == [from getSuit] && [target getValue] + 1 == [from getSuit]))
+    {
+        orderedDeck[index] = from;
+        [from select];
+        
+        [orderedCells[index] setImage:[NSImage imageNamed:[from getCardImageString]]];
+        
+        [mGameBoard[fClm] removeLastObject];
+        lastRow[fClm] = [mGameBoard[fClm] lastObject];
+        [from moveOutFromGameboard];
+        
+        [self updateColumn:fClm];
+        
+        selectedPos.column = selected_pos_default_val;
+        selectedPos.row = selected_pos_default_val;
+    }
 }
 
 - (struct Coord) getSelectCoord
