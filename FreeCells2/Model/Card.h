@@ -57,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (CardImageView *) getCardView;
 
+- (void) resetCard;
 @end
 
 NS_ASSUME_NONNULL_END

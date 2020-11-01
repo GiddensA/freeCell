@@ -72,6 +72,7 @@
     for (int i = 0; i < num_of_cards_per_deck; i++)
     {
         [self->index addObject:[NSNumber numberWithInt:i]];
+        [self->deck[i] resetCard];
     }
     self->isShuffled = NO;
 }

@@ -178,6 +178,7 @@ enum card_view_type
 {
     int index = (int)sender.index;
     LOG_UI(TAG, @"clicked on empty card %d", index);
+    [mGame selectCardAtRow:0 column:index];
 }
 
 

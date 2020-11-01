@@ -233,4 +233,13 @@
 {
     [self->mCardDelegate onCardRightClickedDown:cardView];
 }
+
+- (void) resetCard
+{
+    if(self->isSelected)
+    {
+        self->isSelected = NO;
+        [mCardView setImage:[NSImage imageNamed:[self getCardImageString]]];
+    }
+}
 @end

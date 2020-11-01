@@ -297,9 +297,10 @@
 {
     LOG_MODOLE(TAG, @"move free cell to column %d row %d", tClm, tRow);
     int index = selectedPos.column;
+    int count = (int)mGameBoard[tClm].count;
     Card  *from = freeCells[index];
     [from select];
-    [from setColumn:tClm row:tRow + 1];
+    [from setColumn:tClm row: count == 0 ? 0 : tRow + 1];
     [mGameBoard[tClm] addObject:from];
     lastRow[tClm] = from;
     freeCells[index] = [[Card alloc] initEmptyCard];
@@ -335,9 +336,9 @@
         Card *from = freeCells[selectedPos.column];
         Card *temp = [mGameBoard[column] lastObject];
         LOG_MODOLE(TAG, @"COUNT = %ld %d", mGameBoard[column].count, row);
-        if (row != mGameBoard[column].count - 1 ||
+        if ( mGameBoard[column].count > 0 && (row != mGameBoard[column].count - 1 ||
             [from getCardColor] == [temp getCardColor] ||
-            [from getValue] + 1 != [temp getValue])
+            [from getValue] + 1 != [temp getValue]))
         {
             [freeCells[selectedPos.column] select];
             [utils ShowAlert:ILLEGAL_MOVE];
