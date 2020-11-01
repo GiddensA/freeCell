@@ -30,10 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) selectCardAtRow:(int) row column:(int) column;
 
-//- (void) selectAtFreeCellIndex:(int) index;
-
-- (void) placeCardToOrderedDeckAtIndex:(int) index;
-
 - (void) placeCardToGameBard:(NSView *) gameboard superView:(NSView *) superView orderedCells:(NSMutableArray *) cells;
 
 @end
