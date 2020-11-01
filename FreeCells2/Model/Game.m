@@ -557,7 +557,7 @@
         [orderedCells[index] setImage:[NSImage imageNamed:[from getCardImageString]]];
         
         [mGameBoard[fClm] removeLastObject];
-        lastRow[fClm] = [mGameBoard[fClm] lastObject];
+        lastRow[fClm] = (int)mGameBoard[fClm].count == 0 ? [[Card alloc] initEmptyCard] : [mGameBoard[fClm] lastObject];
         [from moveOutFromGameboard];
         
         [self updateColumn:fClm];
