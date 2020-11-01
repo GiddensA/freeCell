@@ -104,13 +104,13 @@
         int emptyCellCount = 0;
         for (int i = 0; i < num_of_game_board_columns; i++)
         {
-            if (mGameBoard[i].count  - 1 == row)
+            if ((int)mGameBoard[i].count  - 1 == row)
             {
                 // last row
                 emptyCellCount ++;
                 [toReturn appendFormat:@"%@|", [utils GetSpaces:[mGameBoard[i][row] toString]]];
             }
-            else if (mGameBoard[i].count  - 1  < row)
+            else if ((int)mGameBoard[i].count  - 1  < row)
             {
                 // out of bound
                 emptyCellCount ++;
@@ -535,7 +535,7 @@
     [from setColumn:index row:free_cell_row_index];
     [from select];
     [mGameBoard[fClm] removeLastObject];
-    lastRow[fClm] = [mGameBoard[fClm] lastObject];
+    lastRow[fClm] = mGameBoard[fClm].count == 0 ? [[Card alloc] initEmptyCard] : [mGameBoard[fClm] lastObject];
     
     [self updateColumn:fClm];
     [from placeCardToFreeCell:index];
@@ -640,7 +640,10 @@
 
 - (void) updateColumn:(int) clm
 {
+    
     NSInteger count = mGameBoard[clm].count;
+    LOG_MODOLE(TAG, @"helloworld %ld", count);
+    if (count == 0) return;
     for (Card *card in mGameBoard[clm])
     {
         [card updateCardPositionWithColumnSize:count];
