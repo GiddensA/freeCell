@@ -509,7 +509,7 @@
         Card *target = orderedDeck[column];
         
         if (([target isEmptyCard] && [from getValue] == 1) ||
-            ([target getSuit] == [from getSuit] && [target getValue] + 1 == [from getSuit]))
+            ([target getSuit] == [from getSuit] && [target getValue] + 1 == [from getValue]))
         {
             orderedDeck[column] = from;
             [from select];
