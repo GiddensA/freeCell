@@ -493,7 +493,7 @@
     else if (selectedPos.column != selected_pos_default_val && selectedPos.row >= 0 && row == ordered_cell_row_index)
     {
         LOG_MODOLE(TAG, @"select card case 9");
-        if (selectedPos.row == mGameBoard[selectedPos.column].count - 1)
+        if ([self isSelectedAtLastRow])
         {
             [self moveCardToOrderedCell:column from:selectedPos.column];
         }
@@ -548,9 +548,9 @@
 {
     Card *from = [mGameBoard[fClm] lastObject];
     Card *target = orderedDeck[index];
-
+    
     if (([target isEmptyCard] && [from getValue] == 1) ||
-        ([target getSuit] == [from getSuit] && [target getValue] + 1 == [from getSuit]))
+        ([target getSuit] == [from getSuit] && [target getValue] + 1 == [from getValue]))
     {
         orderedDeck[index] = from;
         [from select];
@@ -649,5 +649,10 @@
     {
         [card updateCardPositionWithColumnSize:count];
     }
+}
+
+- (BOOL) isSelectedAtLastRow
+{
+    return selectedPos.row == ((int)mGameBoard[selectedPos.column].count) - 1;
 }
 @end
