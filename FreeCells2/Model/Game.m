@@ -507,6 +507,8 @@
             
             freeCells[selectedPos.column] = [[Card alloc] initEmptyCard];
             [from moveOutFromGameboard];
+            
+            freeCellCount += 1;
         }
         else
         {
