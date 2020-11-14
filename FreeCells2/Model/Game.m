@@ -382,7 +382,7 @@
     else if (selectedPos.column == selected_pos_default_val && selectedPos.row == selected_pos_default_val && row != free_cell_row_index && row != ordered_cell_row_index)
     {
         LOG_MODOLE(TAG, @"select card case 3");
-        if ([mGameBoard[column][row] isEmptyCard]) return; 
+        if ([self isColumnEmpty:column]) return; 
         // check if can select at row clm
         // case 1: selected at the last card
         if ([mGameBoard[column][row] isEqual:lastRow[column]])
