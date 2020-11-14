@@ -190,12 +190,12 @@
 
 - (void) moveCardsToRow:(int)tRow toClm:(int)tClm
 {
-    LOG_MODOLE(TAG, @"Start move selected %d,%d",selectedPos.row, selectedPos.column);
+    LOG_MODOLE(TAG, @"Start move selected %d,%d to %d,%d",selectedPos.row, selectedPos.column, tRow, tClm);
     
     int fRow = selectedPos.row;
     int fClm = selectedPos.column;
     Card *from = mGameBoard[fClm][fRow];
-    Card *to = mGameBoard[tClm][tRow];
+    Card *to = lastRow[tClm];
     
     // case 1: move single card
     if ([from isEqual:lastRow[fClm]])
@@ -208,27 +208,11 @@
             // update lastRow
             // de-select
             // update ui
-            if ([to isEmptyCard])
-            {
-                //[mGameBoard[tClm][tRow] makeCardToOther:from];
-            }
-            else
-            {
-                [from setColumn:tClm row:tRow + 1];
-                [mGameBoard[tClm] addObject:from];
-                
-            }
+            [from setColumn:tClm row: [to isEmptyCard] ? 0 : tRow + 1];
+            [mGameBoard[tClm] addObject:from];
+            [from select];
+            [mGameBoard[fClm] removeObjectAtIndex:fRow];
             
-//            if (fRow == 0)
-//            {
-//                // set the from card to empty card instead of removing from gameboard
-//                [mGameBoard[fClm][fRow] makeEmptyCard];
-//            }
-//            else
-//            {
-                [from select];
-                [mGameBoard[fClm] removeObjectAtIndex:fRow];
-//            }
             [self updateColumn:tClm];
             [self updateColumn:fClm];
             
