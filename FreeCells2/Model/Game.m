@@ -233,7 +233,7 @@
             [self updateColumn:fClm];
             
             lastRow[tClm] = from;
-            lastRow[fClm] = [mGameBoard[fClm] lastObject];
+            lastRow[fClm] =  [self isColumnEmpty:fClm] ?  [[Card alloc] initEmptyCard] : [mGameBoard[fClm] lastObject];
             
             selectedPos.column = selected_pos_default_val;
             selectedPos.row = selected_pos_default_val;
@@ -536,7 +536,7 @@
     [from setColumn:index row:free_cell_row_index];
     [from select];
     [mGameBoard[fClm] removeLastObject];
-    lastRow[fClm] = mGameBoard[fClm].count == 0 ? [[Card alloc] initEmptyCard] : [mGameBoard[fClm] lastObject];
+    lastRow[fClm] = [self isColumnEmpty:fClm] ? [[Card alloc] initEmptyCard] : [mGameBoard[fClm] lastObject];
     
     [self updateColumn:fClm];
     [from placeCardToFreeCell:index];
@@ -558,7 +558,7 @@
         [orderedCells[index] setImage:[NSImage imageNamed:[from getCardImageString]]];
         
         [mGameBoard[fClm] removeLastObject];
-        lastRow[fClm] = (int)mGameBoard[fClm].count == 0 ? [[Card alloc] initEmptyCard] : [mGameBoard[fClm] lastObject];
+        lastRow[fClm] = [self isColumnEmpty:fClm] ? [[Card alloc] initEmptyCard] : [mGameBoard[fClm] lastObject];
         [from moveOutFromGameboard];
         
         [self updateColumn:fClm];
@@ -595,6 +595,7 @@
 
 - (BOOL) checkFreeCells:(NSArray<Card *> *) clm tagetColumn:(int) column
 {
+    LOG_MODOLE(TAG, @"free cell count = %d", freeCellCount);
     if (freeCellCount >= clm.count - 1)
     {
         // have enough free cells
@@ -627,11 +628,6 @@
     return YES;
 }
 
-- (BOOL) placeAtFreeCellIndex:(int)index board:(NSMutableArray<NSArray<Card *> *> *__autoreleasing *)board
-{
-    return YES;
-}
-
 - (void) initParameters
 {
     selectedPos.row = selected_pos_default_val;
@@ -654,5 +650,10 @@
 - (BOOL) isSelectedAtLastRow
 {
     return selectedPos.row == ((int)mGameBoard[selectedPos.column].count) - 1;
+}
+
+- (BOOL) isColumnEmpty:(int) clm
+{
+    return (int)(mGameBoard[clm].count) == 0;
 }
 @end
