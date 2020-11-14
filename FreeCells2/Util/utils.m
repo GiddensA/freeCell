@@ -45,14 +45,21 @@
 {
     NSString *message;
     NSString *info;
-    NSString *buttonTitle;
+    NSMutableArray <NSString *> *btns;
     NSString *iconName;
+    
     
     switch (type) {
         case ILLEGAL_MOVE:
             message = @"Illegal Move!";
             info = @"You cannot place card(s) here!";
-            buttonTitle = @"Got you";
+            btns = [NSMutableArray arrayWithObject: @"Got you"];
+            iconName = @"icon";
+            break;
+        case MOVE_CARD:
+            message = @"Move Cards:";
+            info = @"Please choose the amount of cards to move!";
+            btns = [NSMutableArray arrayWithObjects:@"Single Card", @"Whole column", @"Cancel", nil];
             iconName = @"icon";
             break;
             
@@ -61,7 +68,10 @@
     NSAlert *alert = [[NSAlert alloc] init];
     [alert setMessageText:message];
     [alert setInformativeText:info];
-    [alert addButtonWithTitle:buttonTitle];
+    for (NSString *title in btns)
+    {
+        [alert addButtonWithTitle:title];
+    }
     [alert setIcon:[NSImage imageNamed:iconName]];
     [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:nil];
 }
