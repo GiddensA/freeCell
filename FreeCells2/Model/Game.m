@@ -252,7 +252,7 @@
                 }
                 [mGameBoard[tClm] addObjectsFromArray:clm];
                 [mGameBoard[fClm] removeObjectsInRange:NSMakeRange(fRow, fSize - fRow)];
-                lastRow[fClm] = [mGameBoard[fClm] lastObject];
+                lastRow[fClm] = [self isColumnEmpty:fClm] ? [[Card alloc] initEmptyCard] : [mGameBoard[fClm] lastObject];
                 lastRow[tClm] = [mGameBoard[tClm] lastObject];
                 [self updateColumn:tClm];
                 [self updateColumn:fClm];
