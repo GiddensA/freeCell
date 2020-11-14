@@ -268,6 +268,11 @@
             }
             
         }
+        // move a column of card to an empty column
+        else if ([to isEmptyCard])
+        {
+            [utils ShowAlert:MOVE_CARD];
+        }
         // illegal move
         else
         {
