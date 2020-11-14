@@ -43,6 +43,7 @@
 		E7BD073825260B1900D0528E /* constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constants.h; sourceTree = "<group>"; };
 		E7BD073A25260B2200D0528E /* Card.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Card.m; sourceTree = "<group>"; };
 		E7BD073B25260B2200D0528E /* Card.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Card.h; sourceTree = "<group>"; };
+		E7E5BB1D255FE00300BCBA38 /* AlertDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +127,7 @@
 				E7BD071E25260A9D00D0528E /* AppDelegate.h */,
 				E7BD071F25260A9D00D0528E /* AppDelegate.m */,
 				E7615AE4252F314E000082BA /* GameDelegate.h */,
+				E7E5BB1D255FE00300BCBA38 /* AlertDelegate.h */,
 			);
 			path = Delegate;
 			sourceTree = "<group>";

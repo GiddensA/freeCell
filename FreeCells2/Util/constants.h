@@ -28,6 +28,9 @@ const static int free_cell_row_index = -1;
 const static int ordered_cell_row_index = -2;
 const static int selected_pos_default_val = -100;
 
+const static NSInteger move_a_card_code = 1001;
+const static NSInteger move_a_column_code = 1000;
+
 const static CGFloat top_cell_area_height = 218; //do not change this unless storyboard is changed.
 
 const static CGFloat gap_between_top_cell = 4.0f;

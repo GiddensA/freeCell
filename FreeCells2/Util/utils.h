@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "constants.h"
 #import "LOG.h"
+#import "../Delegate/AlertDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString *) GetSpaces:(NSString *) str;
 
-+ (void) ShowAlert:(enum alert_type) type;
++ (void) ShowAlert:(enum alert_type) type delegate:(nullable id<AlertDelegate>) delegate;
 
 + (CGFloat) GetOverlapSizeWithColumnSize:(NSInteger) size;
 @end

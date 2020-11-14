@@ -9,6 +9,7 @@
 #import "utils.h"
 #import <AppKit/AppKit.h>
 
+
 @implementation utils
 + (enum card_color) GetCardColor:(enum card_suit) suit
 {
@@ -41,7 +42,7 @@
     return [NSString stringWithFormat:@"%@%@", str, space];
 }
 
-+ (void) ShowAlert:(enum alert_type) type
++ (void) ShowAlert:(enum alert_type) type delegate:(nullable id<AlertDelegate>) delegate
 {
     NSString *message;
     NSString *info;
@@ -59,7 +60,7 @@
         case MOVE_CARD:
             message = @"Move Cards:";
             info = @"Please choose the amount of cards to move!";
-            btns = [NSMutableArray arrayWithObjects:@"Single Card", @"Whole column", @"Cancel", nil];
+            btns = [NSMutableArray arrayWithObjects:@"A column", @"A card", nil];
             iconName = @"icon";
             break;
             
@@ -73,7 +74,15 @@
         [alert addButtonWithTitle:title];
     }
     [alert setIcon:[NSImage imageNamed:iconName]];
-    [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:nil];
+    [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow
+                  completionHandler:^(NSModalResponse returnCode) {
+        if (delegate != nil)
+        {
+            [delegate alertDidEnd:returnCode];
+        }
+    }];
+    
+   
 }
 
 + (CGFloat) GetOverlapSizeWithColumnSize:(NSInteger)size

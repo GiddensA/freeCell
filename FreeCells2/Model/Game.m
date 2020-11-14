@@ -8,10 +8,11 @@
 
 #import "Game.h"
 #import "LOG.h"
+#import "../Delegate/AlertDelegate.h"
 
 #define TAG "Game"
 
-@interface Game()
+@interface Game()<AlertDelegate>
 {
     Deck *mDeck;
     NSMutableArray<NSMutableArray<Card *> *> *mGameBoard; // array of rows
@@ -22,6 +23,7 @@
     NSMutableArray<CardImageView *> *orderedCells;
     
     struct Coord selectedPos;
+    struct Coord holdPos;
     
     int freeCellCount;
 }
@@ -160,7 +162,6 @@
     {
         for (int i = 0; i < num_of_game_board_columns; i++)
         {
-//            LOG_MODOLE(TAG, @"placing card %@ %@ at row %d column %d",card, [card toString], row, i);
             if (nil != card)
             {
                 [card setColumn:i row:row];
@@ -230,7 +231,7 @@
             // 2. update ui
             // 3. show alert
             [self selectCardAtRow:selectedPos.row column:selectedPos.column];
-            [utils ShowAlert:ILLEGAL_MOVE];
+            [utils ShowAlert:ILLEGAL_MOVE delegate:nil];
         }
     }
     // case 2: move a column of cards
@@ -271,13 +272,15 @@
         // move a column of card to an empty column
         else if ([to isEmptyCard])
         {
-            [utils ShowAlert:MOVE_CARD];
+            holdPos.row = tRow;
+            holdPos.column = tClm;
+            [utils ShowAlert:MOVE_CARD delegate:self];
         }
         // illegal move
         else
         {
             [self selectCardAtRow:selectedPos.row column:selectedPos.column];
-            [utils ShowAlert:ILLEGAL_MOVE];
+            [utils ShowAlert:ILLEGAL_MOVE delegate:nil];
         }
     }
 }
@@ -330,7 +333,7 @@
             [from getValue] + 1 != [temp getValue]))
         {
             [freeCells[selectedPos.column] select];
-            [utils ShowAlert:ILLEGAL_MOVE];
+            [utils ShowAlert:ILLEGAL_MOVE delegate:nil];
             
         }
         else
@@ -447,7 +450,7 @@
         else
         {
             [self selectCardAtRow:selectedPos.row column:selectedPos.column];
-            [utils ShowAlert:ILLEGAL_MOVE];
+            [utils ShowAlert:ILLEGAL_MOVE delegate:nil];
         }
         
         selectedPos.column = selected_pos_default_val;
@@ -623,6 +626,8 @@
 {
     selectedPos.row = selected_pos_default_val;
     selectedPos.column = selected_pos_default_val;
+    holdPos.row = selected_pos_default_val;
+    holdPos.column = selected_pos_default_val;
     freeCellCount = 4;
 }
 
@@ -646,5 +651,55 @@
 - (BOOL) isColumnEmpty:(int) clm
 {
     return (int)(mGameBoard[clm].count) == 0;
+}
+
+- (void)alertDidEnd:(NSInteger)returnCode
+{
+    LOG_MODOLE(TAG, @"return code = %ld", returnCode);
+    switch (returnCode) {
+        case move_a_card_code:
+        {
+            int fRow = selectedPos.row;
+            int fClm = selectedPos.column;
+            int tClm = holdPos.column;
+            int tRow = holdPos.row;
+            LOG_MODOLE(TAG, @"move one card from %d,%d to  %d,%d", fRow, fClm, tRow, tClm);
+            NSArray<Card *> *column = mGameBoard[fClm];
+            Card *moveCard = [column lastObject];
+            [moveCard setColumn:tClm row:tRow];
+            
+            int index = 0;
+            for (Card *card in column)
+            {
+                if (index >= fRow)
+                {
+                     [card select];
+                }
+                int c = (int)[card getCoordInBoard].column;
+                [card updateCardPositionWithColumnSize:mGameBoard[c].count];
+                index ++;
+            }
+            
+            [mGameBoard[fClm] removeLastObject];
+            [mGameBoard[tClm] addObject:moveCard];
+            
+            lastRow[tClm] = [mGameBoard[fClm] lastObject];
+            lastRow[fClm] = [self isColumnEmpty:fClm] ? [[Card alloc] initEmptyCard] : [column lastObject];
+            
+            selectedPos.row = selected_pos_default_val;
+            selectedPos.column = selected_pos_default_val;
+            holdPos.row = selected_pos_default_val;
+            holdPos.column = selected_pos_default_val;
+            break;
+        }
+        case move_a_column_code:
+        {
+            break;
+        }
+        default:
+            break;
+    }
+    LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
+    [self printLastRow];
 }
 @end
