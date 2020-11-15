@@ -499,8 +499,7 @@
         Card *from = freeCells[selectedPos.column];
         Card *target = orderedDeck[column];
         
-        if (([target isEmptyCard] && [from getValue] == 1) ||
-            ([target getSuit] == [from getSuit] && [target getValue] + 1 == [from getValue]))
+        if ([self canOrderCard:from toCard:target])
         {
             orderedDeck[column] = from;
             [from select];
@@ -521,6 +520,10 @@
         selectedPos.row = selected_pos_default_val;
     }
     
+    if ([self isLost])
+    {
+        [utils ShowAlert:GAME_LOST delegate:self];
+    }
     if ([self isWin])
     {
         [utils ShowAlert:GAME_WIN delegate:nil];
@@ -547,8 +550,7 @@
     Card *from = [mGameBoard[fClm] lastObject];
     Card *target = orderedDeck[index];
     
-    if (([target isEmptyCard] && [from getValue] == 1) ||
-        ([target getSuit] == [from getSuit] && [target getValue] + 1 == [from getValue]))
+    if ([self canOrderCard:from toCard:target])
     {
         orderedDeck[index] = from;
         [from select];
@@ -664,92 +666,105 @@
     return (int)(mGameBoard[clm].count) == 0;
 }
 
-- (void)alertDidEnd:(NSInteger)returnCode
+- (void)alertDidEnd:(NSInteger)returnCode type:(enum alert_type) type
 {
-    LOG_MODOLE(TAG, @"return code = %ld", returnCode);
-    int fRow = selectedPos.row;
-    int fClm = selectedPos.column;
-    int tClm = holdPos.column;
-    int tRow = holdPos.row;
-    NSArray<Card *> *column = mGameBoard[fClm];
-    
-    switch (returnCode) {
-        case move_a_card_code:
-        {
-            LOG_MODOLE(TAG, @"move one card from %d,%d to  %d,%d", fRow, fClm, tRow, tClm);
-            Card *moveCard = [column lastObject];
-            [moveCard setColumn:tClm row:tRow];
-            
-            int index = 0;
-            for (Card *card in column)
+    LOG_MODOLE(TAG, @"return code = %ld alert type = %d", returnCode, type);
+    if (type == MOVE_CARD)
+    {
+        int fRow = selectedPos.row;
+        int fClm = selectedPos.column;
+        int tClm = holdPos.column;
+        int tRow = holdPos.row;
+        NSArray<Card *> *column = mGameBoard[fClm];
+           
+        switch (returnCode) {
+            case move_a_card_code:
             {
-                if (index >= fRow)
+                LOG_MODOLE(TAG, @"move one card from %d,%d to  %d,%d", fRow, fClm, tRow, tClm);
+                Card *moveCard = [column lastObject];
+                [moveCard setColumn:tClm row:tRow];
+                   
+                int index = 0;
+                for (Card *card in column)
                 {
-                     [card select];
-                }
-                int c = (int)[card getCoordInBoard].column;
-                [card updateCardPositionWithColumnSize:mGameBoard[c].count];
-                index ++;
-            }
-            
-            [mGameBoard[fClm] removeLastObject];
-            [mGameBoard[tClm] addObject:moveCard];
-            
-            break;
-        }
-        case move_a_column_code:
-        {
-            LOG_MODOLE(TAG, @"move a column of card from %d,%d to  %d,%d", fRow, fClm, tRow, tClm);
-            int cardToMove = (int)column.count - fRow;
-            int freeCells = [self countFreeCells: column targetClm:tClm] ;
-            int cardCanMove =  freeCells >= cardToMove ? cardToMove : freeCells + 1;
-            int startIndex = (int)column.count - cardCanMove;
-            int index = 0;
-            for (int i = 0; i < column.count; i++)
-            {
-                if (i >= fRow)
-                {
-                    [column[i] select];
-                }
-                if (i >= startIndex)
-                {
-                    [column[i] setColumn:tClm row:index];
+                    if (index >= fRow)
+                    {
+                        [card select];
+                    }
+                    int c = (int)[card getCoordInBoard].column;
+                    [card updateCardPositionWithColumnSize:mGameBoard[c].count];
                     index ++;
-                    [mGameBoard[tClm] addObject:column[i]];
                 }
+                   
+                [mGameBoard[fClm] removeLastObject];
+                [mGameBoard[tClm] addObject:moveCard];
+                
+                break;
             }
-            
-            [mGameBoard[fClm] removeObjectsInRange:NSMakeRange(startIndex, cardCanMove)];
-            
-            for (Card *card in column)
+            case move_a_column_code:
             {
-                [card updateCardPositionWithColumnSize:column.count];
+                LOG_MODOLE(TAG, @"move a column of card from %d,%d to  %d,%d", fRow, fClm, tRow, tClm);
+                int cardToMove = (int)column.count - fRow;
+                int freeCells = [self countFreeCells: column targetClm:tClm] ;
+                int cardCanMove =  freeCells >= cardToMove ? cardToMove : freeCells + 1;
+                int startIndex = (int)column.count - cardCanMove;
+                int index = 0;
+                for (int i = 0; i < column.count; i++)
+                {
+                    if (i >= fRow)
+                    {
+                        [column[i] select];
+                    }
+                    if (i >= startIndex)
+                    {
+                        [column[i] setColumn:tClm row:index];
+                           index ++;
+                           [mGameBoard[tClm] addObject:column[i]];
+                       }
+                }
+                   
+                [mGameBoard[fClm] removeObjectsInRange:NSMakeRange(startIndex, cardCanMove)];
+                   
+                for (Card *card in column)
+                {
+                    [card updateCardPositionWithColumnSize:column.count];
+                }
+                for (Card *card in mGameBoard[tClm])
+                {
+                    [card updateCardPositionWithColumnSize:cardCanMove];
+                }
+                   
+                break;
             }
-            for (Card *card in mGameBoard[tClm])
-            {
-                [card updateCardPositionWithColumnSize:cardCanMove];
-            }
-            
-            break;
+            default:
+                break;
         }
-        default:
-            break;
+        lastRow[tClm] = [mGameBoard[fClm] lastObject];
+        lastRow[fClm] = [self isColumnEmpty:fClm] ? [[Card alloc] initEmptyCard] : [column lastObject];
+           
+        selectedPos.row = selected_pos_default_val;
+        selectedPos.column = selected_pos_default_val;
+        holdPos.row = selected_pos_default_val;
+        holdPos.column = selected_pos_default_val;
+           
+        LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
+        [self printLastRow];
     }
-    lastRow[tClm] = [mGameBoard[fClm] lastObject];
-    lastRow[fClm] = [self isColumnEmpty:fClm] ? [[Card alloc] initEmptyCard] : [column lastObject];
-    
-    selectedPos.row = selected_pos_default_val;
-    selectedPos.column = selected_pos_default_val;
-    holdPos.row = selected_pos_default_val;
-    holdPos.column = selected_pos_default_val;
-    
-    LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
-    [self printLastRow];
+    else if (type == GAME_LOST)
+    {
+        [_mGameDelegate onGameReset];
+    }
+   
 }
 
 - (BOOL) canPlaceCard:(Card *) from toCard:(Card *) to
 {
-    return [from getCardColor] != [to getCardColor] && [from getValue] + 1 == [to getValue];
+    return ([from getCardColor] != [to getCardColor] && [from getValue] + 1 == [to getValue]) || [to isEmptyCard];
+}
+
+- (BOOL) canOrderCard:(Card *) from toCard:(Card *) to
+{
+    return ([from getSuit] == [to getSuit] && [from getValue] == [to getValue] + 1) || ([from getValue] == 1 && [to isEmptyCard]);
 }
 
 - (BOOL) isWin
@@ -764,5 +779,73 @@
     }
     LOG_MODOLE(TAG, @"card ordered = %d", ordered);
     return ordered == num_of_suits;
+}
+
+- (BOOL) isLost
+{
+    LOG_MODOLE(TAG, @"freeCellCount = %d", freeCellCount);
+    if (freeCellCount > 0)
+    {
+        return NO;
+    }
+    else
+    {
+        // check if there is a card can be moved on game board
+        for (int i = 0; i < num_of_game_board_columns; i++)
+        {
+            for (int j = 0; j < num_of_game_board_columns; j++)
+            {
+                if (i != j)
+                {
+                    Card *from = lastRow[i];
+                    Card *to = lastRow[j];
+                    if ([self canPlaceCard:from toCard:to])
+                    {
+                        return NO;
+                    }
+                }
+            }
+        }
+        // check if there is a card in the free cells can be moved to game board
+        for (int i = 0; i < num_of_free_cells; i ++)
+        {
+            for (int j = 0; j < num_of_game_board_columns; j++)
+            {
+                Card *from = freeCells[i];
+                Card *to = lastRow[j];
+                if ([self canPlaceCard:from toCard:to])
+                {
+                    return NO;
+                }
+            }
+        }
+        // check if there is a card on the game board that can be collected into ordered deck
+        for (int i = 0; i < num_of_game_board_columns; i++)
+        {
+            for (int j = 0; j < num_of_ordered_cells; j++)
+            {
+                Card *from = lastRow[i];
+                Card *to = orderedDeck[j];
+                if ([self canOrderCard:from toCard:to])
+                {
+                    return NO;
+                }
+            }
+        }
+        // check if there is a card in free cells that can be collected into ordered deck
+        for (int i = 0; i < num_of_free_cells; i++)
+        {
+            for (int j = 0; j < num_of_ordered_cells; j++)
+            {
+                Card *from = freeCells[i];
+                Card *to = orderedDeck[j];
+                if ([self canOrderCard:from toCard:to])
+                {
+                    return NO;
+                }
+            }
+        }
+        return YES;
+    }
 }
 @end

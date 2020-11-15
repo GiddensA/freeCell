@@ -69,6 +69,12 @@
             btns = [NSArray arrayWithObject:@"Cheer!"];
             iconName = @"icon";
             break;
+        case GAME_LOST:
+            message = @"Dead End!";
+            info = @"You are in a dead End!";
+            btns = [NSArray arrayWithObject:@"Re-start!"];
+            iconName = @"icon";
+            break;
     }
     
     NSAlert *alert = [[NSAlert alloc] init];
@@ -83,7 +89,7 @@
                   completionHandler:^(NSModalResponse returnCode) {
         if (delegate != nil)
         {
-            [delegate alertDidEnd:returnCode];
+            [delegate alertDidEnd:returnCode type:type];
         }
     }];
     

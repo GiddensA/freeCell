@@ -10,7 +10,7 @@
 #define AlertDelegate_h
 @protocol AlertDelegate <NSObject>
 
-- (void)alertDidEnd:(NSInteger)returnCode;
+- (void)alertDidEnd:(NSInteger)returnCode type:(enum alert_type) type;
 
 @end
 #endif /* AlertDelegate_h */

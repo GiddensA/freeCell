@@ -73,6 +73,7 @@ enum alert_type {
     ILLEGAL_MOVE,
     MOVE_CARD,
     GAME_WIN,
+    GAME_LOST,
 };
 
 struct Coord

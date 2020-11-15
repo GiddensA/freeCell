@@ -16,6 +16,8 @@
 - (void) onCardRightClickedDown:(CardImageView *) card;
 
 - (void) onCardRightClickedUp:(CardImageView *) card nextCardView:(CardImageView *)nextCard;
+
+- (void) onGameReset;
  
 @end
 

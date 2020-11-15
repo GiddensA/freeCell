@@ -111,11 +111,7 @@ enum card_view_type
 }
 
 - (IBAction)onIndicatorClicked:(NSButton *)sender {
-    [self removeAllCardViews];
-    
-    [mGame resetGame];
-    [self layoutCards];
-
+    [self resetGame];
 }
 
 - (IBAction)onFreeCellClicked:(CardImageView *)sender {
@@ -161,6 +157,19 @@ enum card_view_type
         [mGameBoardView addSubview:card positioned:NSWindowBelow relativeTo:nextCard];
         
     }
+}
+
+- (void)onGameReset
+{
+    [self resetGame];
+}
+
+- (void) resetGame
+{
+    [self removeAllCardViews];
+    
+    [mGame resetGame];
+    [self layoutCards];
 }
 
 - (void) removeAllCardViews
