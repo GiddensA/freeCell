@@ -72,6 +72,7 @@ enum card_color {
 enum alert_type {
     ILLEGAL_MOVE,
     MOVE_CARD,
+    GAME_WIN,
 };
 
 struct Coord

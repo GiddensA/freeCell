@@ -520,6 +520,11 @@
         selectedPos.column = selected_pos_default_val;
         selectedPos.row = selected_pos_default_val;
     }
+    
+    if ([self isWin])
+    {
+        [utils ShowAlert:GAME_WIN delegate:nil];
+    }
 }
 
 - (void)moveCardToFreeCellIndex:(int)index from:(int) fClm
@@ -745,5 +750,19 @@
 - (BOOL) canPlaceCard:(Card *) from toCard:(Card *) to
 {
     return [from getCardColor] != [to getCardColor] && [from getValue] + 1 == [to getValue];
+}
+
+- (BOOL) isWin
+{
+    int ordered = 0;
+    for (Card *card in orderedDeck)
+    {
+        if([card getValue] == 13)
+        {
+            ordered ++;
+        }
+    }
+    LOG_MODOLE(TAG, @"card ordered = %d", ordered);
+    return ordered == num_of_suits;
 }
 @end

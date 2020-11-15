@@ -46,7 +46,7 @@
 {
     NSString *message;
     NSString *info;
-    NSMutableArray <NSString *> *btns;
+    NSArray <NSString *> *btns;
     NSString *iconName;
     
     
@@ -54,16 +54,21 @@
         case ILLEGAL_MOVE:
             message = @"Illegal Move!";
             info = @"You cannot place card(s) here!";
-            btns = [NSMutableArray arrayWithObject: @"Got you"];
+            btns = [NSArray arrayWithObject: @"Got you"];
             iconName = @"icon";
             break;
         case MOVE_CARD:
             message = @"Move Cards:";
             info = @"Please choose the amount of cards to move!";
-            btns = [NSMutableArray arrayWithObjects:@"A column", @"A card", nil];
+            btns = [NSArray arrayWithObjects:@"A column", @"A card", nil];
             iconName = @"icon";
             break;
-            
+        case GAME_WIN:
+            message = @"Congratulations!";
+            info = @"You win the game!";
+            btns = [NSArray arrayWithObject:@"Cheer!"];
+            iconName = @"icon";
+            break;
     }
     
     NSAlert *alert = [[NSAlert alloc] init];
