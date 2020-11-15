@@ -662,15 +662,16 @@
 - (void)alertDidEnd:(NSInteger)returnCode
 {
     LOG_MODOLE(TAG, @"return code = %ld", returnCode);
+    int fRow = selectedPos.row;
+    int fClm = selectedPos.column;
+    int tClm = holdPos.column;
+    int tRow = holdPos.row;
+    NSArray<Card *> *column = mGameBoard[fClm];
+    
     switch (returnCode) {
         case move_a_card_code:
         {
-            int fRow = selectedPos.row;
-            int fClm = selectedPos.column;
-            int tClm = holdPos.column;
-            int tRow = holdPos.row;
             LOG_MODOLE(TAG, @"move one card from %d,%d to  %d,%d", fRow, fClm, tRow, tClm);
-            NSArray<Card *> *column = mGameBoard[fClm];
             Card *moveCard = [column lastObject];
             [moveCard setColumn:tClm row:tRow];
             
@@ -689,22 +690,54 @@
             [mGameBoard[fClm] removeLastObject];
             [mGameBoard[tClm] addObject:moveCard];
             
-            lastRow[tClm] = [mGameBoard[fClm] lastObject];
-            lastRow[fClm] = [self isColumnEmpty:fClm] ? [[Card alloc] initEmptyCard] : [column lastObject];
-            
-            selectedPos.row = selected_pos_default_val;
-            selectedPos.column = selected_pos_default_val;
-            holdPos.row = selected_pos_default_val;
-            holdPos.column = selected_pos_default_val;
             break;
         }
         case move_a_column_code:
         {
+            LOG_MODOLE(TAG, @"move a column of card from %d,%d to  %d,%d", fRow, fClm, tRow, tClm);
+            int cardToMove = (int)column.count - fRow;
+            int freeCells = [self countFreeCells: column targetClm:tClm] ;
+            int cardCanMove =  freeCells >= cardToMove ? cardToMove : freeCells + 1;
+            int startIndex = (int)column.count - cardCanMove;
+            int index = 0;
+            for (int i = 0; i < column.count; i++)
+            {
+                if (i >= fRow)
+                {
+                    [column[i] select];
+                }
+                if (i >= startIndex)
+                {
+                    [column[i] setColumn:tClm row:index];
+                    index ++;
+                    [mGameBoard[tClm] addObject:column[i]];
+                }
+            }
+            
+            [mGameBoard[fClm] removeObjectsInRange:NSMakeRange(startIndex, cardCanMove)];
+            
+            for (Card *card in column)
+            {
+                [card updateCardPositionWithColumnSize:column.count];
+            }
+            for (Card *card in mGameBoard[tClm])
+            {
+                [card updateCardPositionWithColumnSize:cardCanMove];
+            }
+            
             break;
         }
         default:
             break;
     }
+    lastRow[tClm] = [mGameBoard[fClm] lastObject];
+    lastRow[fClm] = [self isColumnEmpty:fClm] ? [[Card alloc] initEmptyCard] : [column lastObject];
+    
+    selectedPos.row = selected_pos_default_val;
+    selectedPos.column = selected_pos_default_val;
+    holdPos.row = selected_pos_default_val;
+    holdPos.column = selected_pos_default_val;
+    
     LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
     [self printLastRow];
 }
