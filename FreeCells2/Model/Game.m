@@ -382,7 +382,7 @@
     else if (selectedPos.column == selected_pos_default_val && selectedPos.row == selected_pos_default_val && row != free_cell_row_index && row != ordered_cell_row_index)
     {
         LOG_MODOLE(TAG, @"select card case 3");
-        if ([self isColumnEmpty:column]) return; 
+        if ([self isColumnEmpty:column]) return;
         // check if can select at row clm
         // case 1: selected at the last card
         if ([mGameBoard[column][row] isEqual:lastRow[column]])
@@ -589,37 +589,44 @@
 
 - (BOOL) checkFreeCells:(NSArray<Card *> *) clm tagetColumn:(int) column
 {
-    LOG_MODOLE(TAG, @"free cell count = %d", freeCellCount);
-    if (freeCellCount >= clm.count - 1)
+    return [self countFreeCells:clm targetClm:column] >= (int)clm.count - 1;
+}
+- (int) countFreeCells:(NSArray<Card *> *) column targetClm:(int) clm
+{
+    int clmCount = (int)column.count;
+    int count = 0;
+    
+    NSMutableArray<Card *> *tempLastRow = [NSMutableArray arrayWithArray:lastRow];
+    int index = 0;
+    int checked = 0;
+    
+    while(index < clmCount && checked < num_of_game_board_columns - 1)
     {
-        // have enough free cells
-        LOG_MODOLE(TAG, @"has enough free cells %d move size = %d", freeCellCount, (int)clm.count);
-        return YES;
-    } else {
-        int cardNeedToPlace = (int)clm.count - freeCellCount - 1;
-        LOG_MODOLE(TAG, @"cards need to be placed %d", cardNeedToPlace);
-        NSMutableArray <Card *> *tmpLastRow = lastRow;
-        for (int i = 0; i < cardNeedToPlace; i ++)
+        checked = 0;
+        Card *card = column[clmCount - index - 1];
+        LOG_MODOLE(TAG, @"counting at card index = %d card = %@, count = %d", index, [card toString], count);
+        for (int i = 0; i < tempLastRow.count; i++)
         {
-            Card *last = clm[clm.count - 1 - i];
-            LOG_MODOLE(TAG, @"check last card %@", [last toString]);
-            BOOL f = NO;
-            for (int j = 0; j < num_of_game_board_columns; j ++)
+            if (i == clm)
             {
-                if ([tmpLastRow[j] getValue] == [last getValue] + 1 && [tmpLastRow[j] getCardColor] != [last getCardColor])
-                {
-                    f = YES;
-                    tmpLastRow[j] = last;
-                    break;
-                }
+                continue;
             }
-            if (!f)
+            Card *lastCard = tempLastRow[i];
+            if (([lastCard getValue] == [card getValue] + 1 && [lastCard getCardColor] != [card getCardColor])
+                || [lastCard isEmptyCard])
             {
-                return NO;
+                count ++;
+                index ++;
+                break;
+            }
+            else
+            {
+                checked ++;
             }
         }
     }
-    return YES;
+    LOG_MODOLE(TAG, @"free cells = %d", count + freeCellCount);
+    return count + freeCellCount;
 }
 
 - (void) initParameters
@@ -635,7 +642,7 @@
 {
     
     NSInteger count = mGameBoard[clm].count;
-    LOG_MODOLE(TAG, @"helloworld %ld", count);
+
     if (count == 0) return;
     for (Card *card in mGameBoard[clm])
     {
