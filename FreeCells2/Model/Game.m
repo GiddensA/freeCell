@@ -202,7 +202,7 @@
     if ([from isEqual:lastRow[fClm]])
     {
         LOG_MODOLE(TAG, @"move one card %@ %@ to %d %d", from, [from toString], tRow, tClm);
-        if ([to isEmptyCard] || ([from getValue] + 1 == [to getValue] && [from getCardColor] != [to getCardColor]))
+        if ([to isEmptyCard] || [self canPlaceCard:from toCard:to])
         {
             // can move
             // update gameboard
@@ -238,7 +238,7 @@
     else
     {
         // legal move
-        if ([from getValue] + 1 == [to getValue] && [from getCardColor] != [to getCardColor])
+        if ([self canPlaceCard:from toCard:to])
         {
             int fSize = (int)mGameBoard[fClm].count;
             NSArray<Card *> *clm = [mGameBoard[fClm] subarrayWithRange:NSMakeRange(fRow, fSize - fRow)];
@@ -309,7 +309,7 @@
     for (int i = row; i < clm.count - 1; i++)
     {
         LOG_MODOLE(TAG, @"i = %d, compare card %@ vs %@", i, [clm[i] toString], [clm[i + 1] toString]);
-        if ([clm[i] getValue] != [clm[i + 1] getValue] + 1 || [clm[i] getCardColor] == [clm[i + 1] getCardColor]) return NO;
+        if (![self canPlaceCard:clm[i + 1] toCard:clm[i]]) return NO;
     }
     return YES;
 }
@@ -329,8 +329,7 @@
         Card *temp = [mGameBoard[column] lastObject];
         LOG_MODOLE(TAG, @"COUNT = %ld %d", mGameBoard[column].count, row);
         if ( mGameBoard[column].count > 0 && (row != mGameBoard[column].count - 1 ||
-            [from getCardColor] == [temp getCardColor] ||
-            [from getValue] + 1 != [temp getValue]))
+            ![self canPlaceCard:from toCard:temp]))
         {
             [freeCells[selectedPos.column] select];
             [utils ShowAlert:ILLEGAL_MOVE delegate:nil];
@@ -591,6 +590,7 @@
 {
     return [self countFreeCells:clm targetClm:column] >= (int)clm.count - 1;
 }
+
 - (int) countFreeCells:(NSArray<Card *> *) column targetClm:(int) clm
 {
     int clmCount = (int)column.count;
@@ -612,8 +612,7 @@
                 continue;
             }
             Card *lastCard = tempLastRow[i];
-            if (([lastCard getValue] == [card getValue] + 1 && [lastCard getCardColor] != [card getCardColor])
-                || [lastCard isEmptyCard])
+            if ([self canPlaceCard:card toCard:lastCard] || [lastCard isEmptyCard])
             {
                 count ++;
                 index ++;
@@ -708,5 +707,10 @@
     }
     LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
     [self printLastRow];
+}
+
+- (BOOL) canPlaceCard:(Card *) from toCard:(Card *) to
+{
+    return [from getCardColor] != [to getCardColor] && [from getValue] + 1 == [to getValue];
 }
 @end
