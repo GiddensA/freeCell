@@ -237,8 +237,15 @@
     // case 2: move a column of cards
     else
     {
+        // move a column of card to an empty column
+        if ([to isEmptyCard])
+        {
+            holdPos.row = tRow;
+            holdPos.column = tClm;
+            [utils ShowAlert:MOVE_CARD delegate:self];
+        }
         // legal move
-        if ([self canPlaceCard:from toCard:to])
+        else if ([self canPlaceCard:from toCard:to])
         {
             int fSize = (int)mGameBoard[fClm].count;
             NSArray<Card *> *clm = [mGameBoard[fClm] subarrayWithRange:NSMakeRange(fRow, fSize - fRow)];
@@ -268,13 +275,6 @@
                 [self selectCardAtRow:selectedPos.row column:selectedPos.column];
             }
             
-        }
-        // move a column of card to an empty column
-        else if ([to isEmptyCard])
-        {
-            holdPos.row = tRow;
-            holdPos.column = tClm;
-            [utils ShowAlert:MOVE_CARD delegate:self];
         }
         // illegal move
         else
