@@ -27,6 +27,7 @@ const static int max_fixd_card_per_column = 8;
 const static int free_cell_row_index = -1;
 const static int ordered_cell_row_index = -2;
 const static int selected_pos_default_val = -100;
+const static int auto_finish_card_value_threshold = 3;
 
 const static NSInteger move_a_card_code = 1001;
 const static NSInteger move_a_column_code = 1000;

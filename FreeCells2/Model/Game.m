@@ -338,6 +338,7 @@
         else
         {
             [self moveCardFromFreeCellToClm:column tRow:row];
+            [self autoFinish:auto_finish_card_value_threshold];
             
             LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
             [self printLastRow];
@@ -428,6 +429,7 @@
     {
         LOG_MODOLE(TAG, @"select card case 5");
         [self moveCardsToRow:row toClm:column];
+        [self autoFinish:auto_finish_card_value_threshold];
         
         LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
         [self printLastRow];
@@ -445,6 +447,7 @@
         if ([freeCells[column] isEmptyCard] && [lastRow[selectedPos.column] isEqual:from])
         {
             [self moveCardToFreeCellIndex:column from:selectedPos.column];
+            [self autoFinish:auto_finish_card_value_threshold];
         }
         else
         {
@@ -487,6 +490,7 @@
         if ([self isSelectedAtLastRow])
         {
             [self moveCardToOrderedCell:column from:selectedPos.column];
+            [self autoFinish:auto_finish_card_value_threshold];
         }
     }
     // case 10: move card to ordered cell from free cell
@@ -725,14 +729,8 @@
                    
                 [mGameBoard[fClm] removeObjectsInRange:NSMakeRange(startIndex, cardCanMove)];
                    
-                for (Card *card in column)
-                {
-                    [card updateCardPositionWithColumnSize:column.count];
-                }
-                for (Card *card in mGameBoard[tClm])
-                {
-                    [card updateCardPositionWithColumnSize:cardCanMove];
-                }
+                [self updateColumn:fClm];
+                [self updateColumn:tClm];
                    
                 break;
             }
@@ -846,6 +844,43 @@
             }
         }
         return YES;
+    }
+}
+
+- (void) autoFinish:(int) maxLimit
+{
+    for (int i = 0; i < num_of_game_board_columns; i ++)
+    {
+        Card *from = lastRow[i];
+        LOG_MODOLE(TAG, @"from card = %@", [from toString]);
+        if ([from getValue] > maxLimit || [from isEmptyCard])
+        {
+            continue;
+        }
+        else
+        {
+            for (int j = 0; j < num_of_ordered_cells; j++)
+            {
+                Card *to = orderedDeck[j];
+                if ([self canOrderCard:from toCard:to])
+                {
+                    orderedDeck[j] = from;
+                    
+                    [orderedCells[j] setImage:[NSImage imageNamed:[from getCardImageString]]];
+                    
+                    [mGameBoard[i] removeLastObject];
+                    lastRow[i] = [self isColumnEmpty:i] ? [[Card alloc] initEmptyCard] : [mGameBoard[i] lastObject];
+                    [from moveOutFromGameboard];
+                    
+                    [self updateColumn:i];
+                    LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
+                    [self printLastRow];
+                    [self autoFinish:maxLimit];
+                    break;
+                }
+            }
+            
+        }
     }
 }
 @end
