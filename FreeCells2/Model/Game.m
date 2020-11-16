@@ -737,7 +737,7 @@
             default:
                 break;
         }
-        lastRow[tClm] = [mGameBoard[fClm] lastObject];
+        lastRow[tClm] = [mGameBoard[tClm] lastObject];
         lastRow[fClm] = [self isColumnEmpty:fClm] ? [[Card alloc] initEmptyCard] : [column lastObject];
            
         selectedPos.row = selected_pos_default_val;
