@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) placeCardToGameBard:(NSView *) gameboard superView:(NSView *) superView orderedCells:(NSMutableArray *) cells;
 
+- (void) autoFinish:(int) maxLimit;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -10,6 +10,7 @@
 #import "utils.h"
 #import "LOG.h"
 #import "GameDelegate.h"
+#import "AppDelegate.h"
 
 
 #define TAG "MainVC"
@@ -90,7 +91,7 @@ enum card_view_type
     }
     
     [self layoutCards];
-    
+    ((AppDelegate *)[NSApplication sharedApplication].delegate).mGame = mGame;
 }
 
 - (void) mouseMoved:(NSEvent *)event

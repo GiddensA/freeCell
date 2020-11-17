@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E768065825273E740098BC94 /* CardImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E768065725273E740098BC94 /* CardImageView.m */; };
+		E7753C86256429F7009A3A2F /* MainMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = E7753C85256429F7009A3A2F /* MainMenu.m */; };
 		E77E0AED252622BE0029010A /* Deck.m in Sources */ = {isa = PBXBuildFile; fileRef = E77E0AEC252622BE0029010A /* Deck.m */; };
 		E77E0AF025262DF80029010A /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = E77E0AEF25262DF80029010A /* Game.m */; };
 		E7BD072025260A9D00D0528E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E7BD071F25260A9D00D0528E /* AppDelegate.m */; };
@@ -23,6 +24,8 @@
 		E7615AE4252F314E000082BA /* GameDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameDelegate.h; sourceTree = "<group>"; };
 		E768065625273E740098BC94 /* CardImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CardImageView.h; sourceTree = "<group>"; };
 		E768065725273E740098BC94 /* CardImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardImageView.m; sourceTree = "<group>"; };
+		E7753C84256429F7009A3A2F /* MainMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainMenu.h; sourceTree = "<group>"; };
+		E7753C85256429F7009A3A2F /* MainMenu.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainMenu.m; sourceTree = "<group>"; };
 		E77E0AEA252610800029010A /* LOG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LOG.h; sourceTree = "<group>"; };
 		E77E0AEB252622BE0029010A /* Deck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Deck.h; sourceTree = "<group>"; };
 		E77E0AEC252622BE0029010A /* Deck.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Deck.m; sourceTree = "<group>"; };
@@ -104,6 +107,8 @@
 				E7680655252726210098BC94 /* Components */,
 				E7BD072125260A9D00D0528E /* MainViewController.h */,
 				E7BD072225260A9D00D0528E /* MainViewController.m */,
+				E7753C84256429F7009A3A2F /* MainMenu.h */,
+				E7753C85256429F7009A3A2F /* MainMenu.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -220,6 +225,7 @@
 				E77E0AED252622BE0029010A /* Deck.m in Sources */,
 				E77E0AF025262DF80029010A /* Game.m in Sources */,
 				E7BD073925260B1900D0528E /* utils.m in Sources */,
+				E7753C86256429F7009A3A2F /* MainMenu.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,9 +7,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+#import "Game.h"
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-
+@property Game *mGame;
 @end
 
