@@ -512,8 +512,10 @@
             
             freeCells[selectedPos.column] = [[Card alloc] initEmptyCard];
             [from moveOutFromGameboard];
-            
+        
             freeCellCount += 1;
+            
+            [self autoFinish:auto_finish_card_value_threshold];
         }
         else
         {
