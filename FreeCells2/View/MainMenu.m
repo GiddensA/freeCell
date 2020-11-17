@@ -17,7 +17,7 @@
 }
 
 - (IBAction)onMenuAutoFinishClicked:(NSMenuItem *)sender {
-    [((AppDelegate *)[NSApplication sharedApplication].delegate).mGame autoFinish:num_of_cards_per_suit];
+    [((AppDelegate *)[NSApplication sharedApplication].delegate).mGame autoFinish];
 }
 
 @end

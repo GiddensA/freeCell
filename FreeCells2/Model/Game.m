@@ -885,4 +885,13 @@
         }
     }
 }
+
+- (void) autoFinish
+{
+    [self autoFinish:num_of_cards_per_suit];
+    if ([self isWin])
+    {
+        [utils ShowAlert:GAME_WIN delegate:self];
+    }
+}
 @end
