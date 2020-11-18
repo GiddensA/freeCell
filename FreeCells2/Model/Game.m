@@ -746,7 +746,7 @@
         selectedPos.column = selected_pos_default_val;
         holdPos.row = selected_pos_default_val;
         holdPos.column = selected_pos_default_val;
-           
+        [self autoFinish:auto_finish_card_value_threshold];
         LOG_MODOLE(TAG, @"Board set\n%@",[self gameBoardToString]);
         [self printLastRow];
     }
