@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *) gameBoardToString;
 
+- (NSString *) printColumn:(int) clm;
+
 - (void) selectCardAtRow:(int) row column:(int) column;
 
 - (void) placeCardToGameBard:(NSView *) gameboard superView:(NSView *) superView orderedCells:(NSMutableArray *) cells;

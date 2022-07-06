@@ -135,6 +135,16 @@
     return toReturn;
 }
 
+ - (NSString *)printColumn:(int)clm
+{
+    NSMutableString *toReturn = [NSMutableString string];
+    for (Card *c in mGameBoard[clm])
+    {
+        [toReturn appendFormat:@"%@%@ |\n", [c toString], c];
+    }
+    return toReturn;
+}
+
 - (void) setupGameBoard:(BOOL) needInitBoard
 {
     // init game board if needed
@@ -549,6 +559,7 @@
     [from placeCardToFreeCell:index];
      
     freeCellCount -= 1;
+    LOG_MODOLE(TAG, @"After moving card %@%@ to free cell %d, clm %d looks like \n%@", [from toString], from, index, fClm, [self printColumn:fClm]);
 }
 
 - (void) moveCardToOrderedCell:(int) index from:(int) fClm
@@ -660,6 +671,7 @@
     {
         [card updateCardPositionWithColumnSize:count];
     }
+    [[mGameBoard[clm] lastObject] setNextCardInColumn:nil];
 }
 
 - (BOOL) isSelectedAtLastRow

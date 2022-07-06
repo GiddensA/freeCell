@@ -227,6 +227,7 @@
 - (void) onCardRightClickedUp:(CardImageView *) cardView
 {
     [self->mCardDelegate onCardRightClickedUp:cardView nextCardView:[_nextCardInColumn getCardView]];
+    LOG_UI(TAG, @"next Card %@", [_nextCardInColumn toString]);
 }
 
 - (void) onCardRightClickedDown:(CardImageView *) cardView

@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Card : NSObject
-@property Card * nextCardInColumn;
+@property (nullable) Card * nextCardInColumn;
 
 - (instancetype) initWithValue:(int) value
                           suit:(enum card_suit) suit;
