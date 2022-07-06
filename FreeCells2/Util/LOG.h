@@ -9,7 +9,7 @@
 #ifndef LOG_h
 #define LOG_h
 
-#define LOG_LEVEL 0x7    // bit2  MODEL
+#define LOG_LEVEL 0x0    // bit2  MODEL
                          // bit1  UI
                          // bit0  DELEGATE
 
